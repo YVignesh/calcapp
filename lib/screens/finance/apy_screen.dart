@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class ApyScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _ApyScreenState extends State<ApyScreen> {
   String? _simpleInterest;
   String? _compoundInterest;
   String? _bonus;
+  Map<TextEditingController, String> _errors = {};
 
   static const _compoundOptions = {
     'Annually (1x)': 1,
@@ -32,6 +34,23 @@ class _ApyScreenState extends State<ApyScreen> {
   };
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(
+        controller: _apr,
+        label: 'Nominal rate',
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _principal,
+        label: 'Principal amount',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final r = double.tryParse(_apr.text);
     if (r == null) return;
     final rate = r / 100;
@@ -51,7 +70,8 @@ class _ApyScreenState extends State<ApyScreen> {
       final compoundInt = p * apy;
       simple = '\$${simpleInt.toStringAsFixed(2)}';
       compound = '\$${compoundInt.toStringAsFixed(2)}';
-      bonus = '\$${(compoundInt - simpleInt).toStringAsFixed(2)} extra vs simple interest';
+      bonus =
+          '\$${(compoundInt - simpleInt).toStringAsFixed(2)} extra vs simple interest';
     }
 
     setState(() {
@@ -68,15 +88,20 @@ class _ApyScreenState extends State<ApyScreen> {
     final isLight = Theme.of(context).brightness == Brightness.light;
     return CalcScaffold(
       title: 'APY Calculator',
-      description: 'APY (Annual Percentage Yield) shows the real return after compounding. Compare it to the stated APR to see the true cost or gain.',
+      description:
+          'APY (Annual Percentage Yield) shows the real return after compounding. Compare it to the stated APR to see the true cost or gain.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('NOMINAL RATE (APR)'),
-          TextField(
+          ValidatedField(
             controller: _apr,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(hintText: 'Annual rate', suffixText: '%'),
+            errorText: _errors[_apr],
+            decoration: const InputDecoration(
+              hintText: 'Annual rate',
+              suffixText: '%',
+            ),
           ),
           const SizedBox(height: 12),
           const SectionLabel('COMPOUND FREQUENCY'),
@@ -90,9 +115,16 @@ class _ApyScreenState extends State<ApyScreen> {
               child: DropdownButton<int>(
                 value: _compounds,
                 isExpanded: true,
-                style: GoogleFonts.ibmPlexSans(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
+                style: GoogleFonts.ibmPlexSans(
+                  color: cs.onSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                ),
                 items: _compoundOptions.entries
-                    .map((e) => DropdownMenuItem(value: e.value, child: Text(e.key)))
+                    .map(
+                      (e) =>
+                          DropdownMenuItem(value: e.value, child: Text(e.key)),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => _compounds = v!),
               ),
@@ -100,15 +132,25 @@ class _ApyScreenState extends State<ApyScreen> {
           ),
           const SizedBox(height: 12),
           const SectionLabel('PRINCIPAL AMOUNT (optional)'),
-          TextField(
+          ValidatedField(
             controller: _principal,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(hintText: 'e.g. 10,000', prefixText: '\$'),
+            errorText: _errors[_principal],
+            decoration: const InputDecoration(
+              hintText: 'e.g. 10,000',
+              prefixText: '\$',
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_apy != null) ...[
             const SizedBox(height: 24),
@@ -134,17 +176,40 @@ class _ApyScreenState extends State<ApyScreen> {
     final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Simple vs Compound (1 year)', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurfaceVariant, letterSpacing: 0.3)),
+          Text(
+            'Simple vs Compound (1 year)',
+            style: GoogleFonts.ibmPlexSans(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: cs.onSurfaceVariant,
+              letterSpacing: 0.3,
+            ),
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _tile('Simple Interest', _simpleInterest!, const Color(0xFF3B82F6))),
+              Expanded(
+                child: _tile(
+                  'Simple Interest',
+                  _simpleInterest!,
+                  const Color(0xFF3B82F6),
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _tile('Compound Interest', _compoundInterest!, const Color(0xFF10B981))),
+              Expanded(
+                child: _tile(
+                  'Compound Interest',
+                  _compoundInterest!,
+                  const Color(0xFF10B981),
+                ),
+              ),
             ],
           ),
           if (_bonus != null) ...[
@@ -157,10 +222,21 @@ class _ApyScreenState extends State<ApyScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.trending_up_rounded, size: 16, color: Color(0xFF10B981)),
+                  const Icon(
+                    Icons.trending_up_rounded,
+                    size: 16,
+                    color: Color(0xFF10B981),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(_bonus!, style: GoogleFonts.ibmPlexSans(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF10B981))),
+                    child: Text(
+                      _bonus!,
+                      style: GoogleFonts.ibmPlexSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF10B981),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -183,9 +259,23 @@ class _ApyScreenState extends State<ApyScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: GoogleFonts.ibmPlexSans(fontSize: 11, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
+          Text(
+            label,
+            style: GoogleFonts.ibmPlexSans(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.ibmPlexSans(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
+          Text(
+            value,
+            style: GoogleFonts.ibmPlexSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
+          ),
         ],
       ),
     );

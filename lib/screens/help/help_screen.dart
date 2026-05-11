@@ -22,13 +22,23 @@ class HelpScreen extends StatelessWidget {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               color: Colors.white,
-              onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+              onPressed: () =>
+                  context.canPop() ? context.pop() : context.go('/'),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsetsDirectional.only(start: 56, bottom: 14, end: 16),
-              title: Text('Help & Guide',
-                  style: GoogleFonts.ibmPlexSans(
-                      fontWeight: FontWeight.w800, fontSize: 19, color: Colors.white)),
+              titlePadding: const EdgeInsetsDirectional.only(
+                start: 56,
+                bottom: 14,
+                end: 16,
+              ),
+              title: Text(
+                'Help & Guide',
+                style: GoogleFonts.ibmPlexSans(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 19,
+                  color: Colors.white,
+                ),
+              ),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -37,14 +47,19 @@ class HelpScreen extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: Stack(children: [
-                  Positioned(
-                    right: -10,
-                    bottom: -14,
-                    child: Icon(Icons.menu_book_rounded,
-                        size: 128, color: Colors.white.withValues(alpha: 0.16)),
-                  ),
-                ]),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: -10,
+                      bottom: -14,
+                      child: Icon(
+                        Icons.menu_book_rounded,
+                        size: 128,
+                        color: Colors.white.withValues(alpha: 0.16),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -55,12 +70,15 @@ class HelpScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'CalcApp puts ${_toolCount()} calculators and converters in one place — '
+                    'Calc Studio puts ${_toolCount()} calculators and converters in one place — '
                     'finance, health, unit conversion, cooking, home & garden, everyday math, '
                     'a scientific calculator, a graphing calculator and calculus tools.',
                     style: GoogleFonts.ibmPlexSans(
-                        fontSize: 15, height: 1.5, fontWeight: FontWeight.w500,
-                        color: cs.onSurfaceVariant),
+                      fontSize: 15,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 22),
                   _heading(context, 'Categories'),
@@ -80,16 +98,24 @@ class HelpScreen extends StatelessWidget {
                     'frankfurter.app API and cached for 30 minutes. Theme preference is stored '
                     'locally on your device.',
                     style: GoogleFonts.ibmPlexSans(
-                        fontSize: 14, height: 1.55, fontWeight: FontWeight.w500,
-                        color: cs.onSurfaceVariant),
+                      fontSize: 14,
+                      height: 1.55,
+                      fontWeight: FontWeight.w500,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 28),
                   Center(
                     child: FilledButton.tonalIcon(
-                      onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+                      onPressed: () =>
+                          context.canPop() ? context.pop() : context.go('/'),
                       icon: const Icon(Icons.grid_view_rounded, size: 18),
-                      label: Text('Back to calculators',
-                          style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
+                      label: Text(
+                        'Back to calculators',
+                        style: GoogleFonts.ibmPlexSans(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -110,13 +136,14 @@ class HelpScreen extends StatelessWidget {
   }
 
   Widget _heading(BuildContext context, String text) => Text(
-        text,
-        style: GoogleFonts.ibmPlexSans(
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            color: Theme.of(context).colorScheme.onSurface,
-            letterSpacing: -0.3),
-      );
+    text,
+    style: GoogleFonts.ibmPlexSans(
+      fontSize: 20,
+      fontWeight: FontWeight.w800,
+      color: Theme.of(context).colorScheme.onSurface,
+      letterSpacing: -0.3,
+    ),
+  );
 }
 
 class _CategoryRow extends StatelessWidget {
@@ -149,15 +176,24 @@ class _CategoryRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${category.name}  ·  ${category.tools.length} tools',
-                    style: GoogleFonts.ibmPlexSans(
-                        fontSize: 15, fontWeight: FontWeight.w800,
-                        color: cs.onSurface)),
+                Text(
+                  '${category.name}  ·  ${category.tools.length} tools',
+                  style: GoogleFonts.ibmPlexSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: cs.onSurface,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(names,
-                    style: GoogleFonts.ibmPlexSans(
-                        fontSize: 12.5, height: 1.4, fontWeight: FontWeight.w500,
-                        color: cs.onSurfaceVariant)),
+                Text(
+                  names,
+                  style: GoogleFonts.ibmPlexSans(
+                    fontSize: 12.5,
+                    height: 1.4,
+                    fontWeight: FontWeight.w500,
+                    color: cs.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
@@ -249,15 +285,25 @@ class _TopicTile extends StatelessWidget {
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           leading: Icon(topic.icon, color: cs.primary),
-          title: Text(topic.title,
-              style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w800, fontSize: 15)),
+          title: Text(
+            topic.title,
+            style: GoogleFonts.ibmPlexSans(
+              fontWeight: FontWeight.w800,
+              fontSize: 15,
+            ),
+          ),
           childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(topic.body,
-                style: GoogleFonts.ibmPlexSans(
-                    fontSize: 14, height: 1.55, fontWeight: FontWeight.w500,
-                    color: cs.onSurfaceVariant)),
+            Text(
+              topic.body,
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 14,
+                height: 1.55,
+                fontWeight: FontWeight.w500,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),

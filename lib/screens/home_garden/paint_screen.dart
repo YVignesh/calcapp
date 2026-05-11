@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class PaintScreen extends StatefulWidget {
@@ -22,11 +23,26 @@ class _PaintScreenState extends State<PaintScreen> {
   String? _area;
   String? _liters;
   String? _gallons;
+  Map<TextEditingController, String> _errors = {};
 
   // Standard coverage: 1 gallon ≈ 350 sq ft, 1 liter ≈ 9 m²
   static const _sqFtPerGallon = 350.0;
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _length, label: 'Room length', min: 0),
+      FieldSpec(controller: _width, label: 'Room width', min: 0),
+      FieldSpec(controller: _height, label: 'Ceiling height', min: 0),
+      FieldSpec(controller: _doors, label: 'Doors', min: 0, allowZero: true),
+      FieldSpec(
+        controller: _windows,
+        label: 'Windows',
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final l = double.tryParse(_length.text);
     final w = double.tryParse(_width.text);
     final h = double.tryParse(_height.text);
@@ -62,67 +78,131 @@ class _PaintScreenState extends State<PaintScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Paint Calculator',
-      description: 'Estimate the amount of paint needed for a room based on dimensions, ceiling height, number of coats, and openings.',
+      description:
+          'Estimate the amount of paint needed for a room based on dimensions, ceiling height, number of coats, and openings.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('UNIT'),
-          Row(children: [
-            ChoiceChip(label: const Text('feet'), selected: _unit == 'feet',
-                onSelected: (_) => setState(() => _unit = 'feet')),
-            const SizedBox(width: 8),
-            ChoiceChip(label: const Text('meters'), selected: _unit == 'meters',
-                onSelected: (_) => setState(() => _unit = 'meters')),
-          ]),
+          Row(
+            children: [
+              ChoiceChip(
+                label: const Text('feet'),
+                selected: _unit == 'feet',
+                onSelected: (_) => setState(() => _unit = 'feet'),
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: const Text('meters'),
+                selected: _unit == 'meters',
+                onSelected: (_) => setState(() => _unit = 'meters'),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
-          Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('ROOM LENGTH'),
-              TextField(controller: _length,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(suffixText: _unit)),
-            ])),
-            const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('ROOM WIDTH'),
-              TextField(controller: _width,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(suffixText: _unit)),
-            ])),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('ROOM LENGTH'),
+                    ValidatedField(
+                      controller: _length,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_length],
+                      decoration: InputDecoration(suffixText: _unit),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('ROOM WIDTH'),
+                    ValidatedField(
+                      controller: _width,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_width],
+                      decoration: InputDecoration(suffixText: _unit),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('CEILING HEIGHT'),
-          TextField(controller: _height,
+          ValidatedField(
+            controller: _height,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(suffixText: _unit)),
+            errorText: _errors[_height],
+            decoration: InputDecoration(suffixText: _unit),
+          ),
           const SizedBox(height: 12),
-          Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('DOORS'),
-              TextField(controller: _doors, keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: '0')),
-            ])),
-            const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('WINDOWS'),
-              TextField(controller: _windows, keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: '0')),
-            ])),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('DOORS'),
+                    ValidatedField(
+                      controller: _doors,
+                      keyboardType: TextInputType.number,
+                      errorText: _errors[_doors],
+                      decoration: const InputDecoration(hintText: '0'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('WINDOWS'),
+                    ValidatedField(
+                      controller: _windows,
+                      keyboardType: TextInputType.number,
+                      errorText: _errors[_windows],
+                      decoration: const InputDecoration(hintText: '0'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('NUMBER OF COATS'),
           Wrap(
             spacing: 8,
-            children: [1, 2, 3].map((n) => ChoiceChip(
-              label: Text('$n coat${n > 1 ? 's' : ''}'),
-              selected: _coats == n,
-              onSelected: (_) => setState(() => _coats = n),
-            )).toList(),
+            children: [1, 2, 3]
+                .map(
+                  (n) => ChoiceChip(
+                    label: Text('$n coat${n > 1 ? 's' : ''}'),
+                    selected: _coats == n,
+                    onSelected: (_) => setState(() => _coats = n),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_gallons != null) ...[
             const SizedBox(height: 24),

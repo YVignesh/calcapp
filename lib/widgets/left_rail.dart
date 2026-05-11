@@ -39,127 +39,137 @@ class LeftRail extends StatelessWidget {
           border: Border(right: BorderSide(color: borderColor)),
         ),
         child: Column(
-        children: [
-          // App mark
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: cs.primary,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Icon(
-                    Icons.calculate_rounded,
-                    size: 16,
-                    color: cs.onPrimary,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  'CalcApp',
-                  style: GoogleFonts.ibmPlexSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: cs.onSurface,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Search button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: InkWell(
-              onTap: onSearch,
-              borderRadius: BorderRadius.circular(AppTokens.rInput),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
-                  borderRadius: BorderRadius.circular(AppTokens.rInput),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search_rounded,
-                        size: 15, color: cs.onSurfaceVariant),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Search…',
-                      style: GoogleFonts.ibmPlexSans(
-                        fontSize: 13,
-                        color: cs.onSurfaceVariant,
-                        fontWeight: FontWeight.w400,
-                      ),
+          children: [
+            // App mark
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: cs.primary,
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: borderColor),
-                        borderRadius: BorderRadius.circular(4),
+                    child: Icon(
+                      Icons.calculate_rounded,
+                      size: 16,
+                      color: cs.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Calc Studio',
+                    style: GoogleFonts.ibmPlexSans(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSurface,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Search button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: InkWell(
+                onTap: onSearch,
+                borderRadius: BorderRadius.circular(AppTokens.rInput),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
+                    borderRadius: BorderRadius.circular(AppTokens.rInput),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        size: 15,
+                        color: cs.onSurfaceVariant,
                       ),
-                      child: Text(
-                        '⌘K',
-                        style: GoogleFonts.ibmPlexMono(
-                          fontSize: 9,
+                      const SizedBox(width: 8),
+                      Text(
+                        'Search…',
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 13,
                           color: cs.onSurfaceVariant,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ),
-                  ],
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: borderColor),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '⌘K',
+                          style: GoogleFonts.ibmPlexMono(
+                            fontSize: 9,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Divider(height: 1, color: borderColor),
-          // Scrollable nav list
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              children: [
-                // Home
-                _NavItem(
-                  icon: Icons.grid_view_rounded,
-                  label: 'Home',
-                  route: '/',
-                  currentRoute: currentRoute,
-                ),
-                // Pinned tools
-                if (prefs.pinned.isNotEmpty) ...[
-                  _SectionHeader('PINNED'),
-                  ...prefs.pinned.map((route) {
-                    final tool = toolForRoute(route);
-                    if (tool == null) { return const SizedBox.shrink(); }
-                    return _NavItem(
-                      icon: tool.icon,
-                      label: tool.name,
-                      route: route,
-                      currentRoute: currentRoute,
-                      dotColor: categoryForRoute(route)?.gradient.first,
-                    );
-                  }),
+            const SizedBox(height: 4),
+            Divider(height: 1, color: borderColor),
+            // Scrollable nav list
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  // Home
+                  _NavItem(
+                    icon: Icons.grid_view_rounded,
+                    label: 'Home',
+                    route: '/',
+                    currentRoute: currentRoute,
+                  ),
+                  // Pinned tools
+                  if (prefs.pinned.isNotEmpty) ...[
+                    _SectionHeader('PINNED'),
+                    ...prefs.pinned.map((route) {
+                      final tool = toolForRoute(route);
+                      if (tool == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return _NavItem(
+                        icon: tool.icon,
+                        label: tool.name,
+                        route: route,
+                        currentRoute: currentRoute,
+                        dotColor: categoryForRoute(route)?.gradient.first,
+                      );
+                    }),
+                  ],
+                  // Categories
+                  _SectionHeader('CATEGORIES'),
+                  ...categories.map(
+                    (cat) =>
+                        _CategorySection(cat: cat, currentRoute: currentRoute),
+                  ),
                 ],
-                // Categories
-                _SectionHeader('CATEGORIES'),
-                ...categories.map((cat) => _CategorySection(
-                      cat: cat,
-                      currentRoute: currentRoute,
-                    )),
-              ],
+              ),
             ),
-          ),
-          Divider(height: 1, color: borderColor),
-          // Bottom controls
-          _BottomControls(),
-        ],
+            Divider(height: 1, color: borderColor),
+            // Bottom controls
+            _BottomControls(),
+          ],
         ),
       ),
     );
@@ -246,8 +256,7 @@ class _NavItem extends StatelessWidget {
                   label,
                   style: GoogleFonts.ibmPlexSans(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected ? cs.primary : cs.onSurface,
                   ),
                   maxLines: 1,
@@ -279,8 +288,7 @@ class _CategorySectionState extends State<_CategorySection> {
   void didUpdateWidget(_CategorySection old) {
     super.didUpdateWidget(old);
     // Auto-expand when a tool in this category is active.
-    final anyActive = widget.cat.tools
-        .any((t) => t.id == widget.currentRoute);
+    final anyActive = widget.cat.tools.any((t) => t.id == widget.currentRoute);
     if (anyActive && !_expanded) {
       _expanded = true;
     }
@@ -300,8 +308,7 @@ class _CategorySectionState extends State<_CategorySection> {
             onTap: () => setState(() => _expanded = !_expanded),
             borderRadius: BorderRadius.circular(AppTokens.rChip),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
               child: Row(
                 children: [
                   Container(
@@ -336,16 +343,18 @@ class _CategorySectionState extends State<_CategorySection> {
           ),
         ),
         if (_expanded)
-          ...widget.cat.tools.map((tool) => Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: _NavItem(
-                  icon: tool.icon,
-                  label: tool.name,
-                  route: tool.id,
-                  currentRoute: widget.currentRoute,
-                  dotColor: dotColor,
-                ),
-              )),
+          ...widget.cat.tools.map(
+            (tool) => Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: _NavItem(
+                icon: tool.icon,
+                label: tool.name,
+                route: tool.id,
+                currentRoute: widget.currentRoute,
+                dotColor: dotColor,
+              ),
+            ),
+          ),
       ],
     );
   }

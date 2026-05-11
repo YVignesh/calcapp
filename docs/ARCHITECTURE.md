@@ -1,4 +1,4 @@
-# CalcApp — Architecture & Conventions
+# Calc Studio — Architecture & Conventions
 
 Detailed reference for working on this codebase. Read this when you need the *how*; `CLAUDE.md` only carries the headline rules.
 
@@ -13,8 +13,9 @@ lib/
     theme.dart              AppTheme.light()/.dark() — Material 3, Nunito, Apple-ish palette; primary indigo #5E5CE6
     router.dart             go_router; every screen has one GoRoute
     math_expr.dart          normalizeExpr() / prettyMath() / FnEvaluator — shared math-expression helpers
+    calculations/           pure, unit-tested formula logic for finance, health, and math calculators
   data/
-    tools.dart              CategoryDef + ToolDef catalogue: 7 categories, 56+ tools. Home & router derive from this.
+    tools.dart              CategoryDef + ToolDef catalogue: 7 categories, 54 tools. Home & router derive from this.
                             Also: categoryForRoute(route) / toolForRoute(route) lookups (handle '/units/:type').
     units_data.dart         UnitTypeDef / UnitDef + convertUnits(...) for 12 quantity types
   providers/
@@ -23,6 +24,7 @@ lib/
   widgets/
     calc_scaffold.dart      THE screen shell (see §3). Also exports SectionLabel, InfoTile.
     result_card.dart        ResultCard (big value + copy icon + optional InfoRow list) and InfoRow
+    calculation_steps.dart  expandable formula, substitution, and assumption panel for result explanations
     calc_button.dart        button used by the standard/scientific calculators
     math_keypad.dart        MathKeypad on-screen math keyboard + mkAppend/mkBackspace helpers
     function_field.dart      FunctionField — display-only pretty "y = …" expression, tap to activate keypad

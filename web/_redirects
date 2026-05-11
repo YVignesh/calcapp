@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA fallback for Flutter path URLs.
+# Static files such as /sitemap.xml and /robots.txt are served directly.
+/* /index.html 200

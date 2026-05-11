@@ -19,36 +19,134 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="CalcApp is an all-in-one calculator suite with finance, scientific, graphing, unit conversion, health, cooking, home and everyday math tools for web and mobile.">
+  <meta name="description" content="Calc Studio is an all-in-one calculator suite with finance, scientific, graphing, unit conversion, health, cooking, home and everyday math tools for web and mobile.">
   <meta name="theme-color" content="#0B0B0E">
   <meta name="color-scheme" content="light dark">
   <meta name="robots" content="index, follow">
+  <!-- Add Google Search Console verification here after creating the property:
+  <meta name="google-site-verification" content="PASTE_SEARCH_CONSOLE_TOKEN_HERE">
+  -->
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="CalcApp - All-in-One Calculator Suite">
+  <meta property="og:title" content="Calc Studio - All-in-One Calculator Suite">
   <meta property="og:description" content="Fast calculators for finance, scientific math, graphs, conversions, health, cooking, home projects and everyday math.">
+  <meta property="og:url" content="https://calcstudioapp.com/">
   <meta property="og:image" content="icons/Icon-512.png">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="CalcApp - All-in-One Calculator Suite">
+  <meta name="twitter:title" content="Calc Studio - All-in-One Calculator Suite">
   <meta name="twitter:description" content="One app for simple to complex calculations, built for desktop, tablet and mobile.">
   <meta name="twitter:image" content="icons/Icon-512.png">
+  <link rel="canonical" href="https://calcstudioapp.com/">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="CalcApp">
+  <meta name="apple-mobile-web-app-title" content="Calc Studio">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>CalcApp - All-in-One Calculator Suite</title>
+  <title>Calc Studio - All-in-One Calculator Suite</title>
   <link rel="manifest" href="manifest.json">
+  <!-- Optional after enabling Cloudflare Web Analytics:
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"PASTE_CLOUDFLARE_WEB_ANALYTICS_TOKEN_HERE"}'></script>
+  -->
+  <script>
+    (function () {
+      const origin = 'https://calcstudioapp.com';
+      const routeMeta = {
+        '/': {
+          title: 'Calc Studio | Free Online Calculators for Math, Finance, Units & Health',
+          description: 'Use 54 free calculators for finance, scientific math, graphing, unit conversion, health, cooking, home projects and everyday math.',
+          keywords: 'online calculator, finance calculator, scientific calculator, unit converter, bmi calculator'
+        },
+        '/compound-interest': {
+          title: 'Compound Interest Calculator | Calc Studio',
+          description: 'Calculate investment growth, monthly contributions, APY, interest earned and year-by-year compound interest breakdowns.',
+          keywords: 'compound interest calculator, investment calculator, APY calculator, monthly contribution calculator'
+        },
+        '/loan': {
+          title: 'Loan Calculator with Amortization | Calc Studio',
+          description: 'Calculate monthly loan payments, total interest, amortization schedule and extra payment savings.',
+          keywords: 'loan calculator, amortization calculator, monthly payment calculator, extra payment calculator'
+        },
+        '/mortgage': {
+          title: 'Mortgage Calculator with Taxes and Insurance | Calc Studio',
+          description: 'Estimate monthly mortgage payments including principal, interest, property tax and insurance.',
+          keywords: 'mortgage calculator, house payment calculator, PITI calculator, home loan calculator'
+        },
+        '/credit-card': {
+          title: 'Credit Card Payoff Calculator | Calc Studio',
+          description: 'Find how long it takes to pay off credit card debt and how much interest you will pay.',
+          keywords: 'credit card payoff calculator, debt payoff calculator, credit card interest calculator'
+        },
+        '/bmi': {
+          title: 'BMI Calculator | Calc Studio',
+          description: 'Calculate body mass index in metric or imperial units with BMI category ranges and explanation.',
+          keywords: 'BMI calculator, body mass index calculator, healthy weight calculator'
+        },
+        '/bmr': {
+          title: 'BMR and TDEE Calculator | Calc Studio',
+          description: 'Estimate basal metabolic rate with the Mifflin-St Jeor formula and daily calories by activity level.',
+          keywords: 'BMR calculator, TDEE calculator, calorie calculator, Mifflin St Jeor calculator'
+        },
+        '/percentage': {
+          title: 'Percentage Calculator | Calc Studio',
+          description: 'Solve common percentage questions including percent of a number, percent change and reverse percentage.',
+          keywords: 'percentage calculator, percent change calculator, what percent calculator'
+        },
+        '/scientific': {
+          title: 'Scientific Calculator | Calc Studio',
+          description: 'Use a scientific calculator with trigonometry, inverse trig, logs, powers, constants and DEG/RAD support.',
+          keywords: 'scientific calculator, trig calculator, online scientific calculator'
+        },
+        '/graph': {
+          title: 'Graphing Calculator | Calc Studio',
+          description: 'Plot functions of x, compare curves and inspect intercepts, roots, minimum and maximum values.',
+          keywords: 'graphing calculator, function plotter, online graph calculator'
+        },
+        '/units/length': {
+          title: 'Length Converter | Calc Studio',
+          description: 'Convert length units including meters, feet, inches, miles, yards and kilometers.',
+          keywords: 'length converter, feet to meters, inches to cm, miles to km'
+        },
+        '/currency': {
+          title: 'Currency Converter | Calc Studio',
+          description: 'Convert currencies using live mid-market exchange rates with cached offline-friendly results.',
+          keywords: 'currency converter, exchange rate calculator, forex converter'
+        }
+      };
+
+      const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+      const meta = routeMeta[currentPath] || routeMeta['/'];
+      document.title = meta.title;
+
+      function setMeta(selector, attr, value) {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute(attr, value);
+      }
+
+      setMeta('meta[name="description"]', 'content', meta.description);
+      setMeta('meta[property="og:title"]', 'content', meta.title);
+      setMeta('meta[property="og:description"]', 'content', meta.description);
+      setMeta('meta[property="og:url"]', 'content', origin + currentPath);
+      setMeta('meta[name="twitter:title"]', 'content', meta.title);
+      setMeta('meta[name="twitter:description"]', 'content', meta.description);
+      setMeta('link[rel="canonical"]', 'href', origin + currentPath);
+
+      const keywords = document.createElement('meta');
+      keywords.name = 'keywords';
+      keywords.content = meta.keywords;
+      document.head.appendChild(keywords);
+    })();
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "CalcApp",
+      "name": "Calc Studio",
+      "url": "https://calcstudioapp.com/",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Web, Android, iOS",
       "description": "An all-in-one calculator suite for finance, scientific math, graphing, unit conversion, health, cooking, home projects and everyday math.",
@@ -59,9 +157,314 @@
       }
     }
   </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Calc Studio free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Calc Studio provides free calculators for finance, math, unit conversion, health, cooking, home projects and everyday calculations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do calculations run on my device?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most calculations run locally on your device. Currency conversion uses live mid-market rates from a free exchange-rate source and caches results."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use Calc Studio on mobile and desktop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Calc Studio is built as a responsive web and mobile app for phones, tablets and desktop browsers."
+          }
+        }
+      ]
+    }
+  </script>
+  <style>
+    .seo-content {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #1f2937;
+      background: #ffffff;
+    }
+    .seo-content h1 {
+      font-size: 28px;
+      line-height: 1.2;
+      margin: 0 0 12px;
+    }
+    .seo-content h2 {
+      font-size: 20px;
+      margin: 24px 0 10px;
+    }
+    .seo-content p,
+    .seo-content li {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .seo-content a {
+      color: #2563eb;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-  <noscript>CalcApp needs JavaScript to run its calculators.</noscript>
+  <noscript>Calc Studio needs JavaScript to run its calculators.</noscript>
+  <main class="seo-content" aria-label="Calc Studio calculator overview">
+    <h1 id="seo-title">Calc Studio - Free Online Calculators for Math, Finance, Units and Health</h1>
+    <p id="seo-summary">
+      Calc Studio brings 54 calculators and converters into one fast app for students,
+      everyday users and professionals. Use it for finance, scientific math, graphing,
+      unit conversion, health estimates, cooking conversions, home projects and common
+      percentage or date calculations.
+    </p>
+    <h2 id="seo-list-title">Popular Calculators</h2>
+    <ul id="seo-list">
+      <li><a href="/compound-interest">Compound Interest Calculator</a> for investment growth, monthly deposits, APY and interest earned.</li>
+      <li><a href="/loan">Loan Calculator</a> for monthly payments, total interest and amortization schedules.</li>
+      <li><a href="/mortgage">Mortgage Calculator</a> for principal, interest, tax and insurance estimates.</li>
+      <li><a href="/credit-card">Credit Card Payoff Calculator</a> for debt payoff time and interest cost.</li>
+      <li><a href="/bmi">BMI Calculator</a> and <a href="/bmr">BMR Calculator</a> for health and calorie estimates.</li>
+      <li><a href="/percentage">Percentage Calculator</a>, <a href="/scientific">Scientific Calculator</a> and <a href="/graph">Graphing Calculator</a> for school and technical work.</li>
+      <li><a href="/units/length">Length Converter</a> and other unit converters for practical measurement conversions.</li>
+    </ul>
+    <h2 id="seo-detail-title">Why Use Calc Studio?</h2>
+    <p id="seo-detail">
+      The app focuses on clear answers with useful context: calculation steps,
+      assumptions, charts and breakdowns where they help. It is designed for mobile,
+      tablet and desktop browsers, and most tools run directly on your device.
+    </p>
+    <p>
+      Feedback helps improve accuracy and usability. Send suggestions, incorrect-result
+      examples or missing-calculator requests to
+      <a href="mailto:feedback@calcstudioapp.com">feedback@calcstudioapp.com</a>.
+    </p>
+  </main>
+  <script>
+    (function () {
+      const origin = 'https://calcstudioapp.com';
+      const routeContent = {
+        '/compound-interest': {
+          title: 'Compound Interest Calculator with Monthly Contributions',
+          summary: 'Use the Calc Studio compound interest calculator to estimate how an investment grows from an initial principal, annual interest rate, compounding frequency, time period and optional monthly contribution.',
+          listTitle: 'What the compound interest calculator shows',
+          items: [
+            'Future value after compound growth.',
+            'Total contributed versus interest earned.',
+            'APY, total return and estimated time to double.',
+            'Year-by-year growth table and balance chart.'
+          ],
+          detailTitle: 'Compound interest formula and assumptions',
+          detail: 'The calculator converts the nominal annual rate into an effective monthly rate for monthly deposits. Contributions are assumed to be added at the end of each month. Taxes, fees and market volatility are not included.',
+          faq: [
+            ['What is compound interest?', 'Compound interest is interest earned on both the original principal and previously earned interest.'],
+            ['Can I include monthly contributions?', 'Yes. Calc Studio includes optional monthly contributions and separates your deposits from interest earned.']
+          ]
+        },
+        '/loan': {
+          title: 'Loan Calculator with Amortization Schedule',
+          summary: 'Estimate monthly loan payments, total interest and the full amortization schedule for fixed-rate loans. You can also test extra monthly payments to see payoff time and interest savings.',
+          listTitle: 'What the loan calculator shows',
+          items: [
+            'Monthly payment using the standard amortization formula.',
+            'Total payment and total interest over the term.',
+            'Principal versus interest split.',
+            'Amortization schedule with CSV copy support.'
+          ],
+          detailTitle: 'Loan payment formula and assumptions',
+          detail: 'Payments are assumed to be monthly and made at the end of each month. The calculator does not include taxes, insurance, origination fees or prepayment penalties.',
+          faq: [
+            ['How is monthly loan payment calculated?', 'For nonzero interest, payment equals P times r(1+r)^n divided by ((1+r)^n - 1), where P is principal, r is monthly rate and n is number of payments.'],
+            ['Does it show an amortization schedule?', 'Yes. The loan calculator shows month-by-month principal, interest and remaining balance.']
+          ]
+        },
+        '/mortgage': {
+          title: 'Mortgage Calculator with Taxes and Insurance',
+          summary: 'Estimate a mortgage payment from home price, down payment, interest rate, loan term, annual property tax and annual insurance.',
+          listTitle: 'What the mortgage calculator shows',
+          items: [
+            'Total monthly payment estimate.',
+            'Principal and interest payment.',
+            'Loan amount after down payment.',
+            'Total paid and total interest.'
+          ],
+          detailTitle: 'Mortgage assumptions',
+          detail: 'This calculator estimates PITI: principal, interest, taxes and insurance. It does not include HOA dues, PMI, closing costs or rate changes.',
+          faq: [
+            ['What does PITI mean?', 'PITI means principal, interest, taxes and insurance.'],
+            ['Is this a mortgage approval estimate?', 'No. It is an educational estimate and does not replace lender underwriting.']
+          ]
+        },
+        '/credit-card': {
+          title: 'Credit Card Payoff Calculator',
+          summary: 'Find how many months it will take to pay off a credit card balance with a fixed monthly payment and how much interest you will pay.',
+          listTitle: 'What the payoff calculator shows',
+          items: [
+            'Payoff time in months and years.',
+            'Total interest paid.',
+            'Total amount paid including the smaller final payment.',
+            'Warning when payment is too low to reduce the balance.'
+          ],
+          detailTitle: 'Credit card payoff assumptions',
+          detail: 'Interest is applied monthly before payment. The calculation assumes no new purchases, no fees and a fixed APR.',
+          faq: [
+            ['Why is my payment too low?', 'If the monthly payment is less than or equal to the monthly interest, the balance will not be paid down.'],
+            ['Does the calculator count the exact final payment?', 'Yes. The final payment is reduced to the remaining payoff amount.']
+          ]
+        },
+        '/bmi': {
+          title: 'BMI Calculator for Metric and Imperial Units',
+          summary: 'Calculate body mass index from height and weight, then compare the result with standard adult BMI category ranges.',
+          listTitle: 'BMI categories',
+          items: [
+            'Underweight: below 18.5.',
+            'Normal weight: 18.5 to 24.9.',
+            'Overweight: 25 to 29.9.',
+            'Obese: 30 or higher.'
+          ],
+          detailTitle: 'BMI formula and caution',
+          detail: 'BMI equals weight divided by height squared. It is a screening metric, not a diagnosis, and may not reflect body composition for athletes, pregnancy, older adults or children.',
+          faq: [
+            ['What is BMI?', 'BMI is body mass index, a simple weight-to-height ratio used as a screening measure.'],
+            ['Is BMI medical advice?', 'No. BMI is a general estimate and should not replace professional medical guidance.']
+          ]
+        },
+        '/bmr': {
+          title: 'BMR and TDEE Calculator',
+          summary: 'Estimate basal metabolic rate using the Mifflin-St Jeor formula and daily calorie needs based on activity level.',
+          listTitle: 'What the BMR calculator shows',
+          items: [
+            'Basal metabolic rate in kcal per day.',
+            'Estimated maintenance calories.',
+            'Simple calorie targets for weight loss or gain.',
+            'Formula steps and activity multiplier.'
+          ],
+          detailTitle: 'BMR formula and assumptions',
+          detail: 'Mifflin-St Jeor uses weight, height, age and biological sex. TDEE multiplies BMR by an activity factor. Results are estimates, not medical advice.',
+          faq: [
+            ['What is BMR?', 'BMR is the estimated calories your body burns at rest.'],
+            ['What is TDEE?', 'TDEE is total daily energy expenditure, estimated by multiplying BMR by an activity level.']
+          ]
+        },
+        '/percentage': {
+          title: 'Percentage Calculator',
+          summary: 'Solve common percentage problems including what is X percent of Y, X is what percent of Y, and percentage increase or decrease.',
+          listTitle: 'Common percentage calculations',
+          items: [
+            'Find a percentage of a number.',
+            'Find what percent one number is of another.',
+            'Calculate percentage change.',
+            'Check discounts, grades, tips and growth rates.'
+          ],
+          detailTitle: 'Percentage formulas',
+          detail: 'Percentage means per hundred. Percent change equals (new value - old value) divided by old value, multiplied by 100.',
+          faq: [
+            ['How do I calculate percent change?', 'Subtract the old value from the new value, divide by the old value, then multiply by 100.'],
+            ['Can this help with discounts?', 'Yes. Percentage calculations are useful for discounts, tax, tips and grades.']
+          ]
+        },
+        '/scientific': {
+          title: 'Scientific Calculator',
+          summary: 'Use a scientific calculator for trigonometry, inverse trigonometry, logarithms, powers, roots, constants and DEG/RAD angle modes.',
+          listTitle: 'Scientific calculator features',
+          items: [
+            'sin, cos, tan and inverse trigonometric functions.',
+            'DEG and RAD angle modes.',
+            'Logarithms, powers, square roots and constants.',
+            'Expression history and live result preview.'
+          ],
+          detailTitle: 'For students and technical calculations',
+          detail: 'The scientific calculator supports common classroom and engineering expressions with clear angle-mode handling for trigonometric functions.',
+          faq: [
+            ['Does it support degrees and radians?', 'Yes. You can switch between DEG and RAD modes.'],
+            ['Does it support inverse trig?', 'Yes. The calculator includes inverse sine, cosine and tangent.']
+          ]
+        },
+        '/graph': {
+          title: 'Graphing Calculator',
+          summary: 'Plot up to three functions of x, compare curves and inspect roots, intercepts, minimum and maximum values in the visible range.',
+          listTitle: 'Graphing features',
+          items: [
+            'Plot multiple functions on the same axes.',
+            'Use a math keypad for function entry.',
+            'Analyze intercepts, roots and min/max values.',
+            'Adjust the x-axis window and zoom.'
+          ],
+          detailTitle: 'Graphing assumptions',
+          detail: 'Functions are sampled numerically over the selected x range. Undefined points and asymptotes are handled by breaking the plotted line.',
+          faq: [
+            ['Can I plot more than one function?', 'Yes. Calc Studio can plot up to three functions together.'],
+            ['Does it find roots?', 'It estimates roots in the visible graph window.']
+          ]
+        }
+      };
+
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      const content = routeContent[path];
+      if (!content) return;
+
+      document.getElementById('seo-title').textContent = content.title;
+      document.getElementById('seo-summary').textContent = content.summary;
+      document.getElementById('seo-list-title').textContent = content.listTitle;
+      document.getElementById('seo-list').innerHTML = content.items.map(function (item) {
+        return '<li>' + item + '</li>';
+      }).join('');
+      document.getElementById('seo-detail-title').textContent = content.detailTitle;
+      document.getElementById('seo-detail').textContent = content.detail;
+
+      const faqData = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': content.faq.map(function (item) {
+          return {
+            '@type': 'Question',
+            'name': item[0],
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': item[1]
+            }
+          };
+        })
+      };
+      const faqScript = document.createElement('script');
+      faqScript.type = 'application/ld+json';
+      faqScript.textContent = JSON.stringify(faqData);
+      document.head.appendChild(faqScript);
+
+      const breadcrumb = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          {
+            '@type': 'ListItem',
+            'position': 1,
+            'name': 'Calc Studio',
+            'item': origin + '/'
+          },
+          {
+            '@type': 'ListItem',
+            'position': 2,
+            'name': content.title,
+            'item': origin + path
+          }
+        ]
+      };
+      const breadcrumbScript = document.createElement('script');
+      breadcrumbScript.type = 'application/ld+json';
+      breadcrumbScript.textContent = JSON.stringify(breadcrumb);
+      document.head.appendChild(breadcrumbScript);
+    })();
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

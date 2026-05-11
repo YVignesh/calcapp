@@ -56,7 +56,9 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
       _dueDate = _dateFmt.format(due);
       _currentWeek = '$weeksPregnant weeks, $daysInWeek days';
       _trimester = trimester;
-      _daysLeft = daysLeft > 0 ? '$daysLeft days until due date' : 'Past due date';
+      _daysLeft = daysLeft > 0
+          ? '$daysLeft days until due date'
+          : 'Past due date';
     });
   }
 
@@ -66,7 +68,8 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
 
     return CalcScaffold(
       title: 'Pregnancy Calculator',
-      description: 'Enter the first day of your last menstrual period (LMP) to calculate your estimated due date, current week, and trimester.',
+      description:
+          'Enter the first day of your last menstrual period (LMP) to calculate your estimated due date, current week, and trimester.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,14 +86,22 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today_rounded, color: cs.primary, size: 20),
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    color: cs.primary,
+                    size: 20,
+                  ),
                   const SizedBox(width: 12),
                   Text(
-                    _lmpDate != null ? _dateFmt.format(_lmpDate!) : 'Select date',
+                    _lmpDate != null
+                        ? _dateFmt.format(_lmpDate!)
+                        : 'Select date',
                     style: GoogleFonts.ibmPlexSans(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
-                      color: _lmpDate != null ? cs.onSurface : cs.onSurfaceVariant,
+                      color: _lmpDate != null
+                          ? cs.onSurface
+                          : cs.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -138,17 +149,30 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
             child: Row(
               children: [
                 Icon(
-                  isPast ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                  isPast
+                      ? Icons.check_circle_rounded
+                      : Icons.radio_button_unchecked_rounded,
                   color: isPast ? const Color(0xFF10B981) : cs.onSurfaceVariant,
                   size: 20,
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: Text(m.$1,
-                    style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 14))),
-                Text(_dateFmt.format(m.$2),
+                Expanded(
+                  child: Text(
+                    m.$1,
                     style: GoogleFonts.ibmPlexSans(
-                        color: cs.onSurfaceVariant,
-                        fontWeight: FontWeight.w500, fontSize: 13)),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                Text(
+                  _dateFmt.format(m.$2),
+                  style: GoogleFonts.ibmPlexSans(
+                    color: cs.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                  ),
+                ),
               ],
             ),
           );

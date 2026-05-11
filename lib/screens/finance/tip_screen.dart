@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/calculation_steps.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class TipScreen extends StatefulWidget {
@@ -20,24 +22,63 @@ class _TipScreenState extends State<TipScreen> {
   String? _total;
   String? _perPerson;
   String? _tipPerPerson;
+  List<CalcStep> _steps = [];
+  Map<TextEditingController, String> _errors = {};
 
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
     final bill = double.tryParse(_bill.text.replaceAll(',', ''));
-    final people = int.tryParse(_people.text) ?? 1;
-    if (bill == null || bill <= 0) return;
+    final people = int.tryParse(_people.text);
+    final errors = <TextEditingController, String>{};
+    if (bill == null || bill <= 0) {
+      errors[_bill] = 'Bill amount must be greater than 0';
+    }
+    if (people == null || people <= 0) {
+      errors[_people] = 'Number of people must be at least 1';
+    }
+    if (errors.isNotEmpty) {
+      setState(() {
+        _errors = errors;
+        _tipAmount = null;
+        _total = null;
+        _perPerson = null;
+        _tipPerPerson = null;
+      });
+      return;
+    }
 
-    final tip = bill * _tipPct / 100;
-    final total = bill + tip;
-    final pp = total / people;
-    final tpp = tip / people;
+    final validBill = bill!;
+    final validPeople = people!;
+    final tip = validBill * _tipPct / 100;
+    final total = validBill + tip;
+    final pp = total / validPeople;
+    final tpp = tip / validPeople;
 
     setState(() {
+      _errors = {};
       _tipAmount = '\$${_fmt.format(tip)}';
       _total = '\$${_fmt.format(total)}';
       _perPerson = '\$${_fmt.format(pp)}';
       _tipPerPerson = '\$${_fmt.format(tpp)}';
+      _steps = [
+        CalcStep(
+          title: 'Calculate tip',
+          detail:
+              'Tip = bill x tip percent = \$${_fmt.format(validBill)} x ${_tipPct.toStringAsFixed(0)}%',
+          result: 'Tip = $_tipAmount',
+        ),
+        CalcStep(
+          title: 'Add tip to the bill',
+          detail: 'Total = bill + tip',
+          result: 'Total bill = $_total',
+        ),
+        CalcStep(
+          title: 'Split evenly',
+          detail: 'Per person = total / people',
+          result: 'Per person = $_perPerson',
+        ),
+      ];
     });
   }
 
@@ -45,16 +86,21 @@ class _TipScreenState extends State<TipScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Tip Calculator',
-      description: 'Quickly calculate the tip amount and split the bill evenly among your group.',
+      description:
+          'Quickly calculate the tip amount and split the bill evenly among your group.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('BILL AMOUNT'),
-          TextField(
+          ValidatedField(
             controller: _bill,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             onChanged: (_) => _calculate(),
-            decoration: const InputDecoration(hintText: 'Total bill', prefixText: '\$'),
+            errorText: _errors[_bill],
+            decoration: const InputDecoration(
+              hintText: 'Total bill',
+              prefixText: '\$',
+            ),
           ),
           const SizedBox(height: 16),
           const SectionLabel('TIP PERCENTAGE'),
@@ -63,16 +109,26 @@ class _TipScreenState extends State<TipScreen> {
           _quickTips(),
           const SizedBox(height: 16),
           const SectionLabel('NUMBER OF PEOPLE'),
-          TextField(
+          ValidatedField(
             controller: _people,
             keyboardType: TextInputType.number,
             onChanged: (_) => _calculate(),
-            decoration: const InputDecoration(hintText: 'Split between', suffixText: 'people'),
+            errorText: _errors[_people],
+            decoration: const InputDecoration(
+              hintText: 'Split between',
+              suffixText: 'people',
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_tipAmount != null) ...[
             const SizedBox(height: 24),
@@ -84,6 +140,14 @@ class _TipScreenState extends State<TipScreen> {
                 InfoRow('Tip amount', _tipAmount!),
                 InfoRow('Total bill', _total!),
                 InfoRow('Tip per person', _tipPerPerson!),
+              ],
+            ),
+            const SizedBox(height: 12),
+            CalculationSteps(
+              steps: _steps,
+              assumptions: [
+                'The split is evenly divided across all people.',
+                'Taxes and service fees should be included in the bill amount if you want to tip on them.',
               ],
             ),
           ],
@@ -99,9 +163,28 @@ class _TipScreenState extends State<TipScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('0%', style: GoogleFonts.ibmPlexSans(fontSize: 12, color: cs.onSurfaceVariant)),
-            Text('${_tipPct.round()}%', style: GoogleFonts.ibmPlexSans(fontSize: 18, fontWeight: FontWeight.w800, color: cs.primary)),
-            Text('30%', style: GoogleFonts.ibmPlexSans(fontSize: 12, color: cs.onSurfaceVariant)),
+            Text(
+              '0%',
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 12,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
+            Text(
+              '${_tipPct.round()}%',
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: cs.primary,
+              ),
+            ),
+            Text(
+              '30%',
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 12,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
         Slider(
@@ -139,11 +222,14 @@ class _TipScreenState extends State<TipScreen> {
                   color: selected ? cs.primary : cs.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text('$pct%', style: GoogleFonts.ibmPlexSans(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: selected ? cs.onPrimary : cs.onSurfaceVariant,
-                )),
+                child: Text(
+                  '$pct%',
+                  style: GoogleFonts.ibmPlexSans(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                    color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+                  ),
+                ),
               ),
             ),
           ),

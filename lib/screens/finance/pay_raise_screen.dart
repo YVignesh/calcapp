@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class PayRaiseScreen extends StatefulWidget {
@@ -19,9 +20,21 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
   String? _newSalary;
   String? _increase;
   String? _percentChange;
+  Map<TextEditingController, String> _errors = {};
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _current, label: 'Current salary', min: 0),
+      FieldSpec(
+        controller: _raise,
+        label: 'Raise amount',
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final current = double.tryParse(_current.text.replaceAll(',', ''));
     final raise = double.tryParse(_raise.text.replaceAll(',', ''));
     if (current == null || raise == null || current <= 0) return;
@@ -51,36 +64,48 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Pay Raise',
-      description: 'Calculate your new salary and the dollar amount of your raise — enter either a percentage or a fixed amount.',
+      description:
+          'Calculate your new salary and the dollar amount of your raise — enter either a percentage or a fixed amount.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('CURRENT SALARY'),
-          TextField(
+          ValidatedField(
             controller: _current,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(hintText: 'Current salary', prefixText: '\$'),
+            errorText: _errors[_current],
+            decoration: const InputDecoration(
+              hintText: 'Current salary',
+              prefixText: '\$',
+            ),
           ),
           const SizedBox(height: 12),
           const SectionLabel('RAISE TYPE'),
           Row(
             children: [
               Expanded(
-                child: _typeButton('Percentage (%)', _isPercent,
-                    () => setState(() => _isPercent = true)),
+                child: _typeButton(
+                  'Percentage (%)',
+                  _isPercent,
+                  () => setState(() => _isPercent = true),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _typeButton('Fixed Amount (\$)', !_isPercent,
-                    () => setState(() => _isPercent = false)),
+                child: _typeButton(
+                  'Fixed Amount (\$)',
+                  !_isPercent,
+                  () => setState(() => _isPercent = false),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 12),
           const SectionLabel('RAISE AMOUNT'),
-          TextField(
+          ValidatedField(
             controller: _raise,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            errorText: _errors[_raise],
             decoration: InputDecoration(
               hintText: _isPercent ? 'e.g. 5' : 'e.g. 5000',
               suffixText: _isPercent ? '%' : null,
@@ -90,8 +115,13 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate',
-                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_newSalary != null) ...[
             const SizedBox(height: 24),
@@ -100,8 +130,11 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
               value: _newSalary!,
               color: const Color(0xFF10B981),
               rows: [
-                InfoRow('Increase amount', _increase!,
-                    valueColor: const Color(0xFF10B981)),
+                InfoRow(
+                  'Increase amount',
+                  _increase!,
+                  valueColor: const Color(0xFF10B981),
+                ),
                 InfoRow('Percentage change', _percentChange!),
               ],
             ),

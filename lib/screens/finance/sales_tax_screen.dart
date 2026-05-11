@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class SalesTaxScreen extends StatefulWidget {
@@ -19,10 +20,22 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
   String? _taxAmount;
   String? _priceBeforeTax;
   String? _totalPrice;
+  Map<TextEditingController, String> _errors = {};
 
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _price, label: 'Price', min: 0),
+      FieldSpec(
+        controller: _taxRate,
+        label: 'Tax rate',
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final price = double.tryParse(_price.text.replaceAll(',', ''));
     final rate = double.tryParse(_taxRate.text);
     if (price == null || rate == null || price <= 0 || rate < 0) return;
@@ -50,22 +63,31 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
     final cs = Theme.of(context).colorScheme;
     return CalcScaffold(
       title: 'Sales Tax / VAT',
-      description: 'Calculate sales tax or VAT on any purchase. Works both ways — enter a pre-tax price or a tax-inclusive price.',
+      description:
+          'Calculate sales tax or VAT on any purchase. Works both ways — enter a pre-tax price or a tax-inclusive price.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('PRICE'),
-          TextField(
+          ValidatedField(
             controller: _price,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(hintText: 'Enter price', prefixText: '\$'),
+            errorText: _errors[_price],
+            decoration: const InputDecoration(
+              hintText: 'Enter price',
+              prefixText: '\$',
+            ),
           ),
           const SizedBox(height: 12),
           const SectionLabel('TAX RATE'),
-          TextField(
+          ValidatedField(
             controller: _taxRate,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(hintText: 'e.g. 8.5', suffixText: '%'),
+            errorText: _errors[_taxRate],
+            decoration: const InputDecoration(
+              hintText: 'e.g. 8.5',
+              suffixText: '%',
+            ),
           ),
           const SizedBox(height: 16),
           Row(
@@ -77,8 +99,14 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  _priceIncludes ? 'Price already includes tax' : 'Price does not include tax',
-                  style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface),
+                  _priceIncludes
+                      ? 'Price already includes tax'
+                      : 'Price does not include tax',
+                  style: GoogleFonts.ibmPlexSans(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: cs.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -86,7 +114,13 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_taxAmount != null) ...[
             const SizedBox(height: 24),

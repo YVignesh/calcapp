@@ -1,6 +1,6 @@
-# CalcApp — User Guide
+# Calc Studio — User Guide
 
-This is the manual for **CalcApp**, the all‑in‑one calculator app. The same content is available inside the app: tap the **`?`** icon on the home screen or on any calculator screen.
+This is the manual for **Calc Studio**, the all-in-one calculator app. The same content is available inside the app: tap the **`?`** icon on the home screen or on any calculator screen.
 
 ---
 

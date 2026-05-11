@@ -1,6 +1,6 @@
-# CalcApp
+# Calc Studio
 
-Cross-platform Flutter calculator suite (Android · iOS · web), 56+ tools across 7 categories — "one app for every calculation."
+Cross-platform Flutter calculator suite (Android, iOS, web), 54 tools across 7 categories - "one app for every calculation."
 
 **Goal:** a polished, fast (web+mobile) app
 

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/duration_field.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class CagrScreen extends StatefulWidget {
@@ -24,10 +25,23 @@ class _CagrScreenState extends State<CagrScreen> {
   String? _totalReturn;
   String? _absoluteGain;
   String? _requiredEndValue;
+  Map<TextEditingController, String> _errors = {};
   final _pct = NumberFormat('#,##0.00');
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _start, label: 'Beginning value', min: 0),
+      FieldSpec(controller: _end, label: 'Ending value', min: 0),
+      FieldSpec(controller: _years, label: 'Time period', min: 0),
+      FieldSpec(
+        controller: _targetRate,
+        label: 'Target CAGR rate',
+        required: false,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final s = double.tryParse(_start.text.replaceAll(',', ''));
     final e = double.tryParse(_end.text.replaceAll(',', ''));
     final y = durationToYears(_years.text, _timeUnit);
@@ -58,7 +72,8 @@ class _CagrScreenState extends State<CagrScreen> {
     final cs = Theme.of(context).colorScheme;
     return CalcScaffold(
       title: 'CAGR Calculator',
-      description: 'CAGR smooths out volatility to show the steady rate an investment would have grown to reach its end value. Useful for comparing investments over different time periods.',
+      description:
+          'CAGR smooths out volatility to show the steady rate an investment would have grown to reach its end value. Useful for comparing investments over different time periods.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,10 +90,17 @@ class _CagrScreenState extends State<CagrScreen> {
             hint: 'e.g. 5',
             onUnitChanged: (u) => setState(() => _timeUnit = u),
           ),
+          if (_errors[_years] != null) _errorText(_errors[_years]!),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_cagr != null) ...[
             const SizedBox(height: 24),
@@ -101,7 +123,13 @@ class _CagrScreenState extends State<CagrScreen> {
                 backgroundColor: cs.secondaryContainer,
                 foregroundColor: cs.onSecondaryContainer,
               ),
-              child: Text('Calculate Required End Value', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 14)),
+              child: Text(
+                'Calculate Required End Value',
+                style: GoogleFonts.ibmPlexSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ),
             if (_requiredEndValue != null) ...[
               const SizedBox(height: 12),
@@ -118,11 +146,35 @@ class _CagrScreenState extends State<CagrScreen> {
     );
   }
 
-  Widget _field(TextEditingController ctrl, String hint, {String? prefix, String? suffix}) {
-    return TextField(
+  Widget _field(
+    TextEditingController ctrl,
+    String hint, {
+    String? prefix,
+    String? suffix,
+  }) {
+    return ValidatedField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(hintText: hint, prefixText: prefix, suffixText: suffix),
+      errorText: _errors[ctrl],
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixText: prefix,
+        suffixText: suffix,
+      ),
+    );
+  }
+
+  Widget _errorText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text(
+        text,
+        style: GoogleFonts.ibmPlexSans(
+          color: Theme.of(context).colorScheme.error,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 

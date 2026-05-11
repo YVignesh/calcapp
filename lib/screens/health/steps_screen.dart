@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class StepsScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _StepsScreenState extends State<StepsScreen> {
   String? _distance;
   String? _calories;
   String? _duration;
+  Map<TextEditingController, String> _errors = {};
 
   static const _strideMultiplier = {
     'Slow': 0.65,
@@ -42,6 +44,12 @@ class _StepsScreenState extends State<StepsScreen> {
   };
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _steps, label: 'Step count', min: 0),
+      FieldSpec(controller: _weight, label: 'Body weight', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final steps = double.tryParse(_steps.text.replaceAll(',', ''));
     final weight = double.tryParse(_weight.text);
     if (steps == null || weight == null || steps <= 0) return;
@@ -68,43 +76,72 @@ class _StepsScreenState extends State<StepsScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Steps to Calories',
-      description: 'Estimate calories burned, distance walked, and duration based on your step count, weight, and walking pace.',
+      description:
+          'Estimate calories burned, distance walked, and duration based on your step count, weight, and walking pace.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('STEP COUNT'),
-          TextField(
+          ValidatedField(
             controller: _steps,
             keyboardType: TextInputType.number,
+            errorText: _errors[_steps],
             decoration: const InputDecoration(hintText: 'Number of steps'),
           ),
           const SizedBox(height: 12),
           const SectionLabel('BODY WEIGHT'),
-          Row(children: [
-            Expanded(child: TextField(
-              controller: _weight,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(suffixText: _isMetric ? 'kg' : 'lbs'),
-            )),
-            const SizedBox(width: 12),
-            ChoiceChip(label: const Text('kg'), selected: _isMetric,
-                onSelected: (_) => setState(() => _isMetric = true)),
-            const SizedBox(width: 6),
-            ChoiceChip(label: const Text('lbs'), selected: !_isMetric,
-                onSelected: (_) => setState(() => _isMetric = false)),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: ValidatedField(
+                  controller: _weight,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  errorText: _errors[_weight],
+                  decoration: InputDecoration(
+                    suffixText: _isMetric ? 'kg' : 'lbs',
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              ChoiceChip(
+                label: const Text('kg'),
+                selected: _isMetric,
+                onSelected: (_) => setState(() => _isMetric = true),
+              ),
+              const SizedBox(width: 6),
+              ChoiceChip(
+                label: const Text('lbs'),
+                selected: !_isMetric,
+                onSelected: (_) => setState(() => _isMetric = false),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('WALKING PACE'),
           Wrap(
             spacing: 8,
-            children: _strideMultiplier.keys.map((p) =>
-              ChoiceChip(label: Text(p), selected: _pace == p,
-                  onSelected: (_) => setState(() => _pace = p))).toList(),
+            children: _strideMultiplier.keys
+                .map(
+                  (p) => ChoiceChip(
+                    label: Text(p),
+                    selected: _pace == p,
+                    onSelected: (_) => setState(() => _pace = p),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_calories != null) ...[
             const SizedBox(height: 24),

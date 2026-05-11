@@ -34,11 +34,16 @@ class _SquareFootageScreenState extends State<SquareFootageScreen> {
     }
     double totalM2;
     switch (_unit) {
-      case 'feet': totalM2 = total * 0.092903;
-      case 'meters': totalM2 = total;
-      case 'yards': totalM2 = total * 0.836127;
-      case 'inches': totalM2 = total * 0.00064516;
-      default: totalM2 = total;
+      case 'feet':
+        totalM2 = total * 0.092903;
+      case 'meters':
+        totalM2 = total;
+      case 'yards':
+        totalM2 = total * 0.836127;
+      case 'inches':
+        totalM2 = total * 0.00064516;
+      default:
+        totalM2 = total;
     }
     final suffix = _unit == 'meters' ? 'm²' : 'sq $_unit';
     setState(() {
@@ -53,43 +58,67 @@ class _SquareFootageScreenState extends State<SquareFootageScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Square Footage',
-      description: 'Calculate the square footage or square meters of a rectangular room or area.',
+      description:
+          'Calculate the square footage or square meters of a rectangular room or area.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('UNIT'),
           Wrap(
             spacing: 8,
-            children: _units.map((u) => ChoiceChip(
-              label: Text(u),
-              selected: _unit == u,
-              onSelected: (_) => setState(() => _unit = u),
-            )).toList(),
+            children: _units
+                .map(
+                  (u) => ChoiceChip(
+                    label: Text(u),
+                    selected: _unit == u,
+                    onSelected: (_) => setState(() => _unit = u),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 16),
           const SectionLabel('ROOMS / AREAS'),
-          ..._rooms.asMap().entries.map((e) => _RoomRow(
-            room: e.value,
-            index: e.key,
-            unit: _unit,
-            onRemove: _rooms.length > 1 ? () => setState(() {
-              e.value.dispose();
-              _rooms.removeAt(e.key);
-            }) : null,
-          )),
+          ..._rooms.asMap().entries.map(
+            (e) => _RoomRow(
+              room: e.value,
+              index: e.key,
+              unit: _unit,
+              onRemove: _rooms.length > 1
+                  ? () => setState(() {
+                      e.value.dispose();
+                      _rooms.removeAt(e.key);
+                    })
+                  : null,
+            ),
+          ),
           TextButton.icon(
-            onPressed: () => setState(() => _rooms.add(_Room(
-              name: TextEditingController(text: 'Room ${_rooms.length + 1}'),
-              length: TextEditingController(),
-              width: TextEditingController(),
-            ))),
+            onPressed: () => setState(
+              () => _rooms.add(
+                _Room(
+                  name: TextEditingController(
+                    text: 'Room ${_rooms.length + 1}',
+                  ),
+                  length: TextEditingController(),
+                  width: TextEditingController(),
+                ),
+              ),
+            ),
             icon: const Icon(Icons.add_rounded),
-            label: Text('Add room', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
+            label: Text(
+              'Add room',
+              style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700),
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_total != null) ...[
             const SizedBox(height: 24),
@@ -98,7 +127,8 @@ class _SquareFootageScreenState extends State<SquareFootageScreen> {
               value: _total!,
               color: const Color(0xFF14B8A6),
               rows: [
-                if (_totalMetric != null) InfoRow('In square meters', _totalMetric!),
+                if (_totalMetric != null)
+                  InfoRow('In square meters', _totalMetric!),
                 InfoRow('Number of rooms', '${_rooms.length}'),
               ],
             ),
@@ -110,7 +140,9 @@ class _SquareFootageScreenState extends State<SquareFootageScreen> {
 
   @override
   void dispose() {
-    for (final r in _rooms) { r.dispose(); }
+    for (final r in _rooms) {
+      r.dispose();
+    }
     super.dispose();
   }
 }
@@ -120,7 +152,11 @@ class _Room {
   final TextEditingController length;
   final TextEditingController width;
   _Room({required this.name, required this.length, required this.width});
-  void dispose() { name.dispose(); length.dispose(); width.dispose(); }
+  void dispose() {
+    name.dispose();
+    length.dispose();
+    width.dispose();
+  }
 }
 
 class _RoomRow extends StatelessWidget {
@@ -129,7 +165,12 @@ class _RoomRow extends StatelessWidget {
   final String unit;
   final VoidCallback? onRemove;
 
-  const _RoomRow({required this.room, required this.index, required this.unit, this.onRemove});
+  const _RoomRow({
+    required this.room,
+    required this.index,
+    required this.unit,
+    this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +190,10 @@ class _RoomRow extends StatelessWidget {
               ),
               if (onRemove != null)
                 IconButton(
-                  icon: Icon(Icons.remove_circle_outline_rounded, color: cs.error),
+                  icon: Icon(
+                    Icons.remove_circle_outline_rounded,
+                    color: cs.error,
+                  ),
                   onPressed: onRemove,
                 ),
             ],
@@ -160,8 +204,13 @@ class _RoomRow extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: room.length,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(hintText: 'Length', suffixText: unit),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Length',
+                    suffixText: unit,
+                  ),
                 ),
               ),
               const Padding(
@@ -171,8 +220,13 @@ class _RoomRow extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: room.width,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(hintText: 'Width', suffixText: unit),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Width',
+                    suffixText: unit,
+                  ),
                 ),
               ),
             ],

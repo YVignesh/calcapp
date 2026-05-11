@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class SalaryScreen extends StatefulWidget {
@@ -18,11 +19,19 @@ class _SalaryScreenState extends State<SalaryScreen> {
   final _weeksPerYear = TextEditingController(text: '52');
   String _inputType = 'Hourly';
   Map<String, String>? _results;
+  Map<TextEditingController, String> _errors = {};
   final _fmt = NumberFormat('#,##0.00');
 
   static const _types = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Annual'];
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _amount, label: 'Amount', min: 0),
+      FieldSpec(controller: _hoursPerWeek, label: 'Hours per week', min: 0),
+      FieldSpec(controller: _weeksPerYear, label: 'Weeks per year', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final amount = double.tryParse(_amount.text.replaceAll(',', ''));
     final hours = double.tryParse(_hoursPerWeek.text) ?? 40;
     final weeks = double.tryParse(_weeksPerYear.text) ?? 52;
@@ -66,24 +75,30 @@ class _SalaryScreenState extends State<SalaryScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Salary Converter',
-      description: 'Convert any salary between hourly, daily, weekly, monthly, and annual rates based on your working hours.',
+      description:
+          'Convert any salary between hourly, daily, weekly, monthly, and annual rates based on your working hours.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('INPUT TYPE'),
           Wrap(
             spacing: 8,
-            children: _types.map((t) => ChoiceChip(
-              label: Text(t),
-              selected: _inputType == t,
-              onSelected: (_) => setState(() => _inputType = t),
-            )).toList(),
+            children: _types
+                .map(
+                  (t) => ChoiceChip(
+                    label: Text(t),
+                    selected: _inputType == t,
+                    onSelected: (_) => setState(() => _inputType = t),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 12),
           const SectionLabel('AMOUNT'),
-          TextField(
+          ValidatedField(
             controller: _amount,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            errorText: _errors[_amount],
             decoration: InputDecoration(
               hintText: 'Enter ${_inputType.toLowerCase()} pay',
               prefixText: '\$',
@@ -97,9 +112,12 @@ class _SalaryScreenState extends State<SalaryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SectionLabel('HOURS/WEEK'),
-                    TextField(
+                    ValidatedField(
                       controller: _hoursPerWeek,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_hoursPerWeek],
                       decoration: const InputDecoration(hintText: '40'),
                     ),
                   ],
@@ -111,9 +129,12 @@ class _SalaryScreenState extends State<SalaryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SectionLabel('WEEKS/YEAR'),
-                    TextField(
+                    ValidatedField(
                       controller: _weeksPerYear,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_weeksPerYear],
                       decoration: const InputDecoration(hintText: '52'),
                     ),
                   ],
@@ -124,8 +145,13 @@ class _SalaryScreenState extends State<SalaryScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert',
-                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Convert',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_results != null) ...[
             const SizedBox(height: 24),

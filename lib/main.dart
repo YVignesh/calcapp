@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
 import 'providers/density_provider.dart';
+import 'providers/history_provider.dart';
 import 'providers/prefs_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/currency_provider.dart';
@@ -21,11 +22,13 @@ Future<void> main() async {
   // Await both providers' _load() before runApp so there's no first-frame flicker.
   final themeProvider = ThemeProvider();
   final densityProvider = DensityProvider();
+  final historyProvider = HistoryProvider();
   final prefsProvider = PrefsProvider();
 
   await Future.wait([
     themeProvider.loadPrefs(),
     densityProvider.load(),
+    historyProvider.load(),
     prefsProvider.load(),
   ]);
 
@@ -34,6 +37,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
         ChangeNotifierProvider<DensityProvider>.value(value: densityProvider),
+        ChangeNotifierProvider<HistoryProvider>.value(value: historyProvider),
         ChangeNotifierProvider<PrefsProvider>.value(value: prefsProvider),
         ChangeNotifierProvider(create: (_) => CurrencyProvider()),
       ],
@@ -49,7 +53,7 @@ class CalcApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     return MaterialApp.router(
-      title: 'CalcApp — Calculator Suite',
+      title: 'Calc Studio - Calculator Suite',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),

@@ -54,7 +54,9 @@ class _DesktopHome extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppTokens.rInput),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
                       borderRadius: BorderRadius.circular(AppTokens.rInput),
@@ -64,8 +66,11 @@ class _DesktopHome extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded,
-                            color: cs.onSurfaceVariant, size: 18),
+                        Icon(
+                          Icons.search_rounded,
+                          color: cs.onSurfaceVariant,
+                          size: 18,
+                        ),
                         const SizedBox(width: 10),
                         Text(
                           'Search any calculator…',
@@ -77,7 +82,9 @@ class _DesktopHome extends StatelessWidget {
                         const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 3),
+                            horizontal: 7,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: isLight
@@ -103,9 +110,7 @@ class _DesktopHome extends StatelessWidget {
                 if (prefs.pinned.isNotEmpty) ...[
                   _SectionHeading('PINNED'),
                   const SizedBox(height: 10),
-                  _ToolGrid(
-                    routes: prefs.pinned.toList(),
-                  ),
+                  _ToolGrid(routes: prefs.pinned.toList()),
                   const SizedBox(height: 28),
                 ],
                 // Recents
@@ -156,7 +161,7 @@ class _MobileHomeState extends State<_MobileHome> {
           SliverAppBar(
             pinned: true,
             title: Text(
-              'CalcApp',
+              'Calc Studio',
               style: GoogleFonts.ibmPlexSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -172,9 +177,7 @@ class _MobileHomeState extends State<_MobileHome> {
               ),
               IconButton(
                 icon: Icon(
-                  isLight
-                      ? Icons.dark_mode_rounded
-                      : Icons.light_mode_rounded,
+                  isLight ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
                 ),
                 onPressed: () => tp.toggle(context),
                 tooltip: 'Toggle theme',
@@ -277,13 +280,9 @@ class _ToolGrid extends StatelessWidget {
       children: items.map((t) {
         final tool = t.$2!;
         final cat = t.$3;
-        final dotColor = cat?.gradient.first ??
-            Theme.of(context).colorScheme.primary;
-        return _SmallToolCard(
-          tool: tool,
-          dotColor: dotColor,
-          route: t.$1,
-        );
+        final dotColor =
+            cat?.gradient.first ?? Theme.of(context).colorScheme.primary;
+        return _SmallToolCard(tool: tool, dotColor: dotColor, route: t.$1);
       }).toList(),
     );
   }
@@ -360,21 +359,17 @@ class _ToolChips extends StatelessWidget {
       children: routes.map((r) {
         final tool = toolForRoute(r);
         final cat = categoryForRoute(r);
-        if (tool == null) { return const SizedBox.shrink(); }
+        if (tool == null) {
+          return const SizedBox.shrink();
+        }
         final dotColor = cat?.gradient.first ?? cs.primary;
         return ActionChip(
           avatar: Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: dotColor,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
           ),
-          label: Text(
-            tool.name,
-            style: GoogleFonts.ibmPlexSans(fontSize: 12),
-          ),
+          label: Text(tool.name, style: GoogleFonts.ibmPlexSans(fontSize: 12)),
           onPressed: () => context.go(r),
         );
       }).toList(),
@@ -458,8 +453,11 @@ class _CategoryCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded,
-                size: 16, color: cs.onSurfaceVariant),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 16,
+              color: cs.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -497,8 +495,11 @@ class _CategoryTile extends StatelessWidget {
                 color: category.gradient.first.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(AppTokens.rChip),
               ),
-              child: Icon(category.icon,
-                  color: category.gradient.first, size: 18),
+              child: Icon(
+                category.icon,
+                color: category.gradient.first,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -523,8 +524,11 @@ class _CategoryTile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded,
-                size: 18, color: cs.onSurfaceVariant),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: cs.onSurfaceVariant,
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../core/density.dart';
 import '../../core/tokens.dart';
 import '../../providers/density_provider.dart';
+import '../../providers/history_provider.dart';
 import '../../providers/prefs_provider.dart';
 import '../../providers/theme_provider.dart';
 
@@ -32,8 +34,10 @@ class SettingsScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 18,
+                      ),
                       onPressed: () =>
                           context.canPop() ? context.pop() : context.go('/'),
                     ),
@@ -65,6 +69,8 @@ class SettingsScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         _DataSection(),
                         SizedBox(height: 20),
+                        _FeedbackSection(),
+                        SizedBox(height: 20),
                         _AboutSection(),
                       ],
                     ),
@@ -75,6 +81,73 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FeedbackSection extends StatelessWidget {
+  const _FeedbackSection();
+
+  static const _email = 'feedback@calcstudioapp.com';
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final borderColor = Theme.of(context).brightness == Brightness.light
+        ? AppTokens.lBorder
+        : AppTokens.border;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('FEEDBACK'),
+        _Card(
+          children: [
+            ListTile(
+              title: Text(
+                'Send feedback',
+                style: GoogleFonts.ibmPlexSans(fontSize: 14),
+              ),
+              subtitle: Text(
+                _email,
+                style: GoogleFonts.ibmPlexSans(
+                  fontSize: 12,
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+              trailing: const Icon(Icons.copy_rounded, size: 18),
+              onTap: () async {
+                await Clipboard.setData(const ClipboardData(text: _email));
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Feedback email copied',
+                      style: GoogleFonts.ibmPlexSans(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1, color: borderColor),
+            ListTile(
+              title: Text(
+                'What to include',
+                style: GoogleFonts.ibmPlexSans(fontSize: 14),
+              ),
+              subtitle: Text(
+                'Calculator name, expected result, actual result, device, and browser.',
+                style: GoogleFonts.ibmPlexSans(
+                  fontSize: 12,
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -149,7 +222,11 @@ class _ThemeSection extends StatelessWidget {
           children: [
             _SegmentedRow<ThemeMode>(
               label: 'Theme',
-              options: const [ThemeMode.system, ThemeMode.light, ThemeMode.dark],
+              options: const [
+                ThemeMode.system,
+                ThemeMode.light,
+                ThemeMode.dark,
+              ],
               labels: const ['System', 'Light', 'Dark'],
               selected: tp.mode,
               onChanged: tp.setMode,
@@ -179,7 +256,12 @@ class _DensitySection extends StatelessWidget {
           children: [
             _SegmentedRow<Density?>(
               label: 'Layout density',
-              options: const [null, Density.compact, Density.comfortable, Density.cozy],
+              options: const [
+                null,
+                Density.compact,
+                Density.comfortable,
+                Density.cozy,
+              ],
               labels: const ['Auto', 'Compact', 'Comfortable', 'Cozy'],
               selected: dp.override,
               onChanged: dp.set,
@@ -201,6 +283,7 @@ class _DataSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prefs = context.watch<PrefsProvider>();
+    final history = context.watch<HistoryProvider>();
     final cs = Theme.of(context).colorScheme;
     final borderColor = Theme.of(context).brightness == Brightness.light
         ? AppTokens.lBorder
@@ -226,6 +309,24 @@ class _DataSection extends StatelessWidget {
               ),
               trailing: TextButton(
                 onPressed: prefs.recents.isEmpty ? null : prefs.clearRecents,
+                child: const Text('Clear'),
+              ),
+            ),
+            Divider(height: 1, color: borderColor),
+            ListTile(
+              title: Text(
+                'Clear calculation history',
+                style: GoogleFonts.ibmPlexSans(fontSize: 14),
+              ),
+              subtitle: Text(
+                '${history.entries.length} saved',
+                style: GoogleFonts.ibmPlexSans(
+                  fontSize: 12,
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+              trailing: TextButton(
+                onPressed: history.entries.isEmpty ? null : history.clearAll,
                 child: const Text('Clear'),
               ),
             ),
@@ -352,9 +453,7 @@ class _SegmentedRow<T> extends StatelessWidget {
             ),
             selected: {selected},
             onSelectionChanged: (s) => onChanged(s.first),
-            style: SegmentedButton.styleFrom(
-              minimumSize: const Size(0, 36),
-            ),
+            style: SegmentedButton.styleFrom(minimumSize: const Size(0, 36)),
           ),
         ],
       ),

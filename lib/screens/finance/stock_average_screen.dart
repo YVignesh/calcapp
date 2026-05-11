@@ -21,6 +21,7 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
   String? _avgPrice;
   String? _totalShares;
   String? _totalCost;
+  String? _error;
   final _fmt = NumberFormat('#,##0.00####');
 
   void _calculate() {
@@ -34,8 +35,15 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
         totalShares += shares;
       }
     }
-    if (totalShares == 0) return;
+    if (totalShares == 0) {
+      setState(
+        () => _error =
+            'Enter at least one purchase with a valid price and share count.',
+      );
+      return;
+    }
     setState(() {
+      _error = null;
       _avgPrice = '\$${_fmt.format(totalCost / totalShares)}';
       _totalShares = _fmt.format(totalShares);
       _totalCost = '\$${NumberFormat('#,##0.00').format(totalCost)}';
@@ -43,11 +51,14 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
   }
 
   void _addRow() {
-    setState(() => _purchases.add(
-          _Purchase(
-              price: TextEditingController(),
-              shares: TextEditingController()),
-        ));
+    setState(
+      () => _purchases.add(
+        _Purchase(
+          price: TextEditingController(),
+          shares: TextEditingController(),
+        ),
+      ),
+    );
   }
 
   void _removeRow(int i) {
@@ -63,7 +74,8 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
     final cs = Theme.of(context).colorScheme;
     return CalcScaffold(
       title: 'Stock Average Price',
-      description: 'Calculate your dollar-cost average (DCA) price across multiple stock purchases at different prices.',
+      description:
+          'Calculate your dollar-cost average (DCA) price across multiple stock purchases at different prices.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -82,37 +94,47 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
                       color: cs.primaryContainer,
                       shape: BoxShape.circle,
                     ),
-                    child: Text('${i + 1}',
-                        style: GoogleFonts.ibmPlexSans(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                            color: cs.onPrimaryContainer)),
+                    child: Text(
+                      '${i + 1}',
+                      style: GoogleFonts.ibmPlexSans(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: cs.onPrimaryContainer,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _purchases[i].price,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: const InputDecoration(
-                          hintText: 'Price per share', prefixText: '\$'),
+                        hintText: 'Price per share',
+                        prefixText: '\$',
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _purchases[i].shares,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      decoration:
-                          const InputDecoration(hintText: '# of shares'),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      decoration: const InputDecoration(
+                        hintText: '# of shares',
+                      ),
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.remove_circle_outline_rounded,
-                        color: _purchases.length > 2
-                            ? cs.error
-                            : cs.onSurfaceVariant),
+                    icon: Icon(
+                      Icons.remove_circle_outline_rounded,
+                      color: _purchases.length > 2
+                          ? cs.error
+                          : cs.onSurfaceVariant,
+                    ),
                     onPressed: () => _removeRow(i),
                   ),
                 ],
@@ -122,16 +144,34 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
           TextButton.icon(
             onPressed: _addRow,
             icon: const Icon(Icons.add_rounded),
-            label: Text('Add purchase',
-                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
+            label: Text(
+              'Add purchase',
+              style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700),
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate',
-                style: GoogleFonts.ibmPlexSans(
-                    fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                _error!,
+                style: GoogleFonts.ibmPlexSans(
+                  color: cs.error,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
           if (_avgPrice != null) ...[
             const SizedBox(height: 24),
             ResultCard(

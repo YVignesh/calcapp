@@ -1,4 +1,4 @@
-# CalcApp
+# Calc Studio
 
 **One app for every calculation.** A sleek, cross‑platform calculator suite built with Flutter — finance, health, unit conversion, cooking, home & garden, everyday math, a scientific calculator, a graphing calculator and calculus tools, all in a single app that runs on Android, iOS, and the web (desktop, tablet and mobile browsers).
 
@@ -8,7 +8,7 @@
 
 ## Highlights
 
-- **56+ calculators & converters** across 7 categories
+- **54 calculators & converters** across 7 categories
 - **Scientific calculator** — trig + inverse trig (DEG/RAD aware), logs, powers, history, live result preview
 - **Graphing calculator** — plot up to 3 functions of *x* on shared axes, on‑screen math keypad, zoom, automatic analysis (intercepts, min/max)
 - **Advanced math** — numerical derivative (with tangent line), definite integral by Simpson's rule (with shaded area), two‑sided limits — each shown on a graph
@@ -20,6 +20,8 @@
 - **Privacy‑friendly** — every calculation runs on‑device; no account, no tracking; the only network call is for currency rates
 
 For end‑user instructions see **[`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)** (also available in‑app via the `?` button).
+
+Deployment notes for `calcstudioapp.com` live in **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**.
 
 ---
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class OvenTempScreen extends StatefulWidget {
@@ -18,12 +19,20 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
   String? _fahrenheit;
   String? _gasMark;
   String? _description;
+  Map<TextEditingController, String> _errors = {};
 
   static const _units = ['°C', '°F', 'Gas Mark'];
 
   static const _gasToCelsius = {
-    1: 140, 2: 150, 3: 170, 4: 180, 5: 190,
-    6: 200, 7: 220, 8: 230, 9: 240,
+    1: 140,
+    2: 150,
+    3: 170,
+    4: 180,
+    5: 190,
+    6: 200,
+    7: 220,
+    8: 230,
+    9: 240,
   };
 
   static const _tempDescriptions = [
@@ -38,6 +47,16 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
   ];
 
   void _calculate() {
+    final raw = _temp.text.trim();
+    if (raw.isEmpty) {
+      setState(() => _errors = {});
+      return;
+    }
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _temp, label: 'Temperature', allowZero: true),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final input = double.tryParse(_temp.text);
     if (input == null) return;
 
@@ -60,7 +79,10 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
 
     String desc = 'Very hot';
     for (final d in _tempDescriptions) {
-      if (celsius <= d.$1) { desc = d.$2; break; }
+      if (celsius <= d.$1) {
+        desc = d.$2;
+        break;
+      }
     }
 
     setState(() {
@@ -75,25 +97,34 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Oven Temperature',
-      description: 'Convert oven temperatures between Celsius, Fahrenheit, and Gas Mark for precise baking and roasting.',
+      description:
+          'Convert oven temperatures between Celsius, Fahrenheit, and Gas Mark for precise baking and roasting.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('INPUT UNIT'),
           Wrap(
             spacing: 8,
-            children: _units.map((u) => ChoiceChip(
-              label: Text(u),
-              selected: _from == u,
-              onSelected: (_) => setState(() => _from = u),
-            )).toList(),
+            children: _units
+                .map(
+                  (u) => ChoiceChip(
+                    label: Text(u),
+                    selected: _from == u,
+                    onSelected: (_) => setState(() => _from = u),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 12),
           const SectionLabel('TEMPERATURE'),
-          TextField(
+          ValidatedField(
             controller: _temp,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
+              signed: true,
+            ),
             onChanged: (_) => _calculate(),
+            errorText: _errors[_temp],
             decoration: InputDecoration(
               hintText: 'Enter temperature',
               suffixText: _from,
@@ -102,7 +133,13 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Convert',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_celsius != null) ...[
             const SizedBox(height: 24),
@@ -151,16 +188,46 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     child: Row(
                       children: [
-                        Expanded(child: Text(r.$1,
-                            style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant))),
-                        Text(r.$2, style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13)),
+                        Expanded(
+                          child: Text(
+                            r.$1,
+                            style: GoogleFonts.ibmPlexSans(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          r.$2,
+                          style: GoogleFonts.ibmPlexSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                        ),
                         const SizedBox(width: 12),
-                        Text(r.$3, style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13)),
+                        Text(
+                          r.$3,
+                          style: GoogleFonts.ibmPlexSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                        ),
                         const SizedBox(width: 12),
-                        Text('GM ${r.$4}', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
+                        Text(
+                          'GM ${r.$4}',
+                          style: GoogleFonts.ibmPlexSans(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/calculations/math_calculations.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -20,95 +20,62 @@ class _TriangleScreenState extends State<TriangleScreen> {
   final _angleB = TextEditingController();
   final _angleC = TextEditingController();
 
-  Map<String, String>? _results;
+  List<Map<String, String>>? _results;
   String? _error;
 
   void _calculate() {
-    double? a = double.tryParse(_a.text);
-    double? b = double.tryParse(_b.text);
-    double? c = double.tryParse(_c.text);
-    double? aDeg = double.tryParse(_angleA.text);
-    double? bDeg = double.tryParse(_angleB.text);
-    double? cDeg = double.tryParse(_angleC.text);
-
-    double? A = aDeg != null ? aDeg * pi / 180 : null;
-    double? B = bDeg != null ? bDeg * pi / 180 : null;
-    double? C = cDeg != null ? cDeg * pi / 180 : null;
+    final a = double.tryParse(_a.text);
+    final b = double.tryParse(_b.text);
+    final c = double.tryParse(_c.text);
+    final angleA = double.tryParse(_angleA.text);
+    final angleB = double.tryParse(_angleB.text);
+    final angleC = double.tryParse(_angleC.text);
 
     try {
-      if (A != null && B != null && C == null) C = pi - A - B;
-      if (A != null && C != null && B == null) B = pi - A - C;
-      if (B != null && C != null && A == null) A = pi - B - C;
-
-      double sa, sb, sc, sA, sB, sC;
-
-      if (a != null && b != null && c != null) {
-        sa = a; sb = b; sc = c;
-        sA = acos((sb * sb + sc * sc - sa * sa) / (2 * sb * sc));
-        sB = acos((sa * sa + sc * sc - sb * sb) / (2 * sa * sc));
-        sC = pi - sA - sB;
-      } else if (a != null && b != null && C != null) {
-        sa = a; sb = b; sC = C;
-        sc = sqrt(sa * sa + sb * sb - 2 * sa * sb * cos(sC));
-        sA = asin(sa * sin(sC) / sc);
-        sB = pi - sA - sC;
-      } else if (a != null && A != null && B != null) {
-        sa = a; sA = A; sB = B; sC = pi - sA - sB;
-        sb = sa * sin(sB) / sin(sA);
-        sc = sa * sin(sC) / sin(sA);
-      } else if (a != null && b != null && A != null) {
-        sa = a; sb = b; sA = A;
-        sB = asin(sb * sin(sA) / sa);
-        sC = pi - sA - sB;
-        sc = sa * sin(sC) / sin(sA);
-      } else if (a != null && A != null && C != null) {
-        sa = a; sA = A; sC = C; sB = pi - sA - sC;
-        sc = sa * sin(sC) / sin(sA);
-        sb = sa * sin(sB) / sin(sA);
-      } else if (b != null && c != null && A != null) {
-        sb = b; sc = c; sA = A;
-        sa = sqrt(sb * sb + sc * sc - 2 * sb * sc * cos(sA));
-        sB = asin(sb * sin(sA) / sa);
-        sC = pi - sA - sB;
-      } else {
-        setState(() => _error = 'Provide at least 3 values (including one side)');
-        return;
-      }
-
-      if ([sa, sb, sc, sA, sB, sC].any((v) => v.isNaN || v.isInfinite || v < 0)) {
-        setState(() => _error = 'No valid triangle exists with these values');
-        return;
-      }
-
-      final s = (sa + sb + sc) / 2;
-      final area = sqrt(s * (s - sa) * (s - sb) * (s - sc));
-      final perimeter = sa + sb + sc;
-      final inradius = area / s;
-      final circumradius = sa / (2 * sin(sA));
+      final solutions = solveTriangle(
+        a: a,
+        b: b,
+        c: c,
+        angleADeg: angleA,
+        angleBDeg: angleB,
+        angleCDeg: angleC,
+      );
 
       setState(() {
         _error = null;
-        _results = {
-          'Side a': _fmt(sa),
-          'Side b': _fmt(sb),
-          'Side c': _fmt(sc),
-          'Angle A': '${_fmt(sA * 180 / pi)}°',
-          'Angle B': '${_fmt(sB * 180 / pi)}°',
-          'Angle C': '${_fmt(sC * 180 / pi)}°',
-          'Area': _fmt(area),
-          'Perimeter': _fmt(perimeter),
-          'Inradius': _fmt(inradius),
-          'Circumradius': _fmt(circumradius),
-        };
+        _results = solutions.map(_toResultMap).toList();
       });
-    } catch (_) {
-      setState(() => _error = 'No valid triangle exists with these values');
+    } on ArgumentError catch (e) {
+      setState(() {
+        _results = null;
+        _error =
+            e.message?.toString() ??
+            'No valid triangle exists with these values';
+      });
     }
+  }
+
+  Map<String, String> _toResultMap(TriangleSolution s) {
+    return {
+      'Side a': _fmt(s.a),
+      'Side b': _fmt(s.b),
+      'Side c': _fmt(s.c),
+      'Angle A': '${_fmt(s.angleA)} deg',
+      'Angle B': '${_fmt(s.angleB)} deg',
+      'Angle C': '${_fmt(s.angleC)} deg',
+      'Area': _fmt(s.area),
+      'Perimeter': _fmt(s.perimeter),
+      'Inradius': _fmt(s.inradius),
+      'Circumradius': _fmt(s.circumradius),
+    };
   }
 
   String _fmt(double v) {
     if ((v - v.roundToDouble()).abs() < 1e-9) return v.round().toString();
-    return v.toStringAsFixed(4).replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+    return v
+        .toStringAsFixed(4)
+        .replaceAll(RegExp(r'0+$'), '')
+        .replaceAll(RegExp(r'\.$'), '');
   }
 
   @override
@@ -116,7 +83,8 @@ class _TriangleScreenState extends State<TriangleScreen> {
     final cs = Theme.of(context).colorScheme;
     return CalcScaffold(
       title: 'Triangle Solver',
-      description: 'Enter any 3 values (sides a, b, c and/or angles A, B, C in degrees) to solve the complete triangle using the Law of Sines and Cosines.',
+      description:
+          'Enter any 3 values (sides a, b, c and/or angles A, B, C in degrees) to solve the complete triangle using the Law of Sines and Cosines. Ambiguous SSA inputs show both possible solutions.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -134,34 +102,69 @@ class _TriangleScreenState extends State<TriangleScreen> {
           const SectionLabel('ANGLES (degrees)'),
           Row(
             children: [
-              Expanded(child: _inp(_angleA, 'A°')),
+              Expanded(child: _inp(_angleA, 'A')),
               const SizedBox(width: 10),
-              Expanded(child: _inp(_angleB, 'B°')),
+              Expanded(child: _inp(_angleB, 'B')),
               const SizedBox(width: 10),
-              Expanded(child: _inp(_angleC, 'C°')),
+              Expanded(child: _inp(_angleC, 'C')),
             ],
           ),
           if (_error != null)
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Text(_error!, style: GoogleFonts.ibmPlexSans(color: cs.error, fontWeight: FontWeight.w600, fontSize: 13)),
+              child: Text(
+                _error!,
+                style: GoogleFonts.ibmPlexSans(
+                  color: cs.error,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Solve Triangle', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Solve Triangle',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_results != null) ...[
             const SizedBox(height: 24),
-            ResultCard(
-              label: 'TRIANGLE SOLUTION',
-              value: 'Area = ${_results!['Area']}',
-              color: const Color(0xFF8B5CF6),
-              rows: _results!.entries
-                  .where((e) => e.key != 'Area')
-                  .map((e) => InfoRow(e.key, e.value))
-                  .toList(),
-            ),
+            if (_results!.length > 1)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  'Ambiguous SSA case: two valid triangles match these inputs.',
+                  style: GoogleFonts.ibmPlexSans(
+                    color: cs.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ...List.generate(_results!.length, (index) {
+              final result = _results![index];
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: index == _results!.length - 1 ? 0 : 12,
+                ),
+                child: ResultCard(
+                  label: _results!.length == 1
+                      ? 'TRIANGLE SOLUTION'
+                      : 'TRIANGLE SOLUTION ${index + 1}',
+                  value: 'Area = ${result['Area']}',
+                  color: const Color(0xFF8B5CF6),
+                  rows: result.entries
+                      .where((e) => e.key != 'Area')
+                      .map((e) => InfoRow(e.key, e.value))
+                      .toList(),
+                ),
+              );
+            }),
           ],
         ],
       ),
@@ -178,8 +181,12 @@ class _TriangleScreenState extends State<TriangleScreen> {
 
   @override
   void dispose() {
-    _a.dispose(); _b.dispose(); _c.dispose();
-    _angleA.dispose(); _angleB.dispose(); _angleC.dispose();
+    _a.dispose();
+    _b.dispose();
+    _c.dispose();
+    _angleA.dispose();
+    _angleB.dispose();
+    _angleC.dispose();
     super.dispose();
   }
 }

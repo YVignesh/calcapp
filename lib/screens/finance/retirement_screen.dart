@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class RetirementScreen extends StatefulWidget {
@@ -23,16 +24,52 @@ class _RetirementScreenState extends State<RetirementScreen> {
   String? _nestEgg;
   String? _annualIncome;
   String? _monthlyIncome;
+  Map<TextEditingController, String> _errors = {};
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _currentAge, label: 'Current age', min: 0),
+      FieldSpec(controller: _retireAge, label: 'Retirement age', min: 0),
+      FieldSpec(
+        controller: _savings,
+        label: 'Current savings',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _monthly,
+        label: 'Monthly contribution',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _rate,
+        label: 'Expected annual return',
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(controller: _withdrawRate, label: 'Withdrawal rate', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final ca = double.tryParse(_currentAge.text);
     final ra = double.tryParse(_retireAge.text);
     final s = double.tryParse(_savings.text.replaceAll(',', '')) ?? 0;
     final m = double.tryParse(_monthly.text.replaceAll(',', '')) ?? 0;
     final r = double.tryParse(_rate.text);
     final wr = double.tryParse(_withdrawRate.text);
-    if (ca == null || ra == null || r == null || wr == null || ra <= ca) return;
+    if (ca == null || ra == null || r == null || wr == null) return;
+    if (ra <= ca) {
+      setState(
+        () => _errors = {
+          _retireAge: 'Retirement age must be greater than current age',
+        },
+      );
+      return;
+    }
 
     final years = ra - ca;
     final monthlyRate = r / 100 / 12;
@@ -60,7 +97,8 @@ class _RetirementScreenState extends State<RetirementScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Retirement Planner',
-      description: 'Estimate your retirement nest egg and the monthly income it can generate based on the 4% safe withdrawal rule.',
+      description:
+          'Estimate your retirement nest egg and the monthly income it can generate based on the 4% safe withdrawal rule.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -102,9 +140,13 @@ class _RetirementScreenState extends State<RetirementScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate',
-                style: GoogleFonts.ibmPlexSans(
-                    fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_nestEgg != null) ...[
             const SizedBox(height: 24),
@@ -113,10 +155,16 @@ class _RetirementScreenState extends State<RetirementScreen> {
               value: _nestEgg!,
               color: const Color(0xFF10B981),
               rows: [
-                InfoRow('Annual income', _annualIncome!,
-                    valueColor: const Color(0xFF10B981)),
-                InfoRow('Monthly income', _monthlyIncome!,
-                    valueColor: const Color(0xFF10B981)),
+                InfoRow(
+                  'Annual income',
+                  _annualIncome!,
+                  valueColor: const Color(0xFF10B981),
+                ),
+                InfoRow(
+                  'Monthly income',
+                  _monthlyIncome!,
+                  valueColor: const Color(0xFF10B981),
+                ),
               ],
             ),
           ],
@@ -125,13 +173,21 @@ class _RetirementScreenState extends State<RetirementScreen> {
     );
   }
 
-  Widget _field(TextEditingController ctrl, String hint,
-      {String? prefix, String? suffix}) {
-    return TextField(
+  Widget _field(
+    TextEditingController ctrl,
+    String hint, {
+    String? prefix,
+    String? suffix,
+  }) {
+    return ValidatedField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      errorText: _errors[ctrl],
       decoration: InputDecoration(
-          hintText: hint, prefixText: prefix, suffixText: suffix),
+        hintText: hint,
+        prefixText: prefix,
+        suffixText: suffix,
+      ),
     );
   }
 

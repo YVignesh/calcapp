@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class CookingScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _CookingScreenState extends State<CookingScreen> {
   String _to = 'grams';
   String _ingredient = 'Water';
   String _result = '';
+  Map<TextEditingController, String> _errors = {};
 
   // Grams per cup for common ingredients
   static const _gramsPerCup = {
@@ -55,13 +57,32 @@ class _CookingScreenState extends State<CookingScreen> {
     'milliliters': 1.0,
   };
 
-  static const _volumeUnits = ['cups', 'tablespoons', 'teaspoons', 'fluid oz', 'pints', 'quarts', 'liters', 'milliliters'];
+  static const _volumeUnits = [
+    'cups',
+    'tablespoons',
+    'teaspoons',
+    'fluid oz',
+    'pints',
+    'quarts',
+    'liters',
+    'milliliters',
+  ];
   static const _weightUnits = ['grams', 'kilograms', 'ounces', 'pounds'];
 
   List<String> get _fromUnits => [..._volumeUnits, ..._weightUnits];
   List<String> get _toUnits => [..._weightUnits, ..._volumeUnits];
 
   void _calculate() {
+    final raw = _amount.text.trim();
+    if (raw.isEmpty) {
+      setState(() => _errors = {});
+      return;
+    }
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _amount, label: 'Amount', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final amount = double.tryParse(_amount.text);
     if (amount == null || amount <= 0) return;
 
@@ -92,7 +113,12 @@ class _CookingScreenState extends State<CookingScreen> {
   }
 
   double _convertWeight(double value, String from, String to) {
-    const toGrams = {'grams': 1.0, 'kilograms': 1000.0, 'ounces': 28.3495, 'pounds': 453.592};
+    const toGrams = {
+      'grams': 1.0,
+      'kilograms': 1000.0,
+      'ounces': 28.3495,
+      'pounds': 453.592,
+    };
     return value * (toGrams[from] ?? 1) / (toGrams[to] ?? 1);
   }
 
@@ -110,30 +136,45 @@ class _CookingScreenState extends State<CookingScreen> {
 
     return CalcScaffold(
       title: 'Cooking Converter',
-      description: 'Convert cooking measurements between volume units (cups, tablespoons, ml) and weight (grams, ounces) for 20+ ingredients.',
+      description:
+          'Convert cooking measurements between volume units (cups, tablespoons, ml) and weight (grams, ounces) for 20+ ingredients.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('INGREDIENT'),
-          _dropdown(_ingredient, _gramsPerCup.keys.toList(), dropColor, cs,
-              (v) => setState(() => _ingredient = v!)),
+          _dropdown(
+            _ingredient,
+            _gramsPerCup.keys.toList(),
+            dropColor,
+            cs,
+            (v) => setState(() => _ingredient = v!),
+          ),
           const SizedBox(height: 12),
           const SectionLabel('AMOUNT'),
-          TextField(
+          ValidatedField(
             controller: _amount,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             onChanged: (_) => _calculate(),
+            errorText: _errors[_amount],
             decoration: const InputDecoration(hintText: 'Enter amount'),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const SectionLabel('FROM'),
-                  _dropdown(_from, _fromUnits, dropColor, cs,
-                      (v) => setState(() => _from = v!)),
-                ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('FROM'),
+                    _dropdown(
+                      _from,
+                      _fromUnits,
+                      dropColor,
+                      cs,
+                      (v) => setState(() => _from = v!),
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20),
@@ -154,18 +195,32 @@ class _CookingScreenState extends State<CookingScreen> {
                 ),
               ),
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const SectionLabel('TO'),
-                  _dropdown(_to, _toUnits, dropColor, cs,
-                      (v) => setState(() => _to = v!)),
-                ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('TO'),
+                    _dropdown(
+                      _to,
+                      _toUnits,
+                      dropColor,
+                      cs,
+                      (v) => setState(() => _to = v!),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Convert',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_result.isNotEmpty) ...[
             const SizedBox(height: 24),
@@ -181,16 +236,31 @@ class _CookingScreenState extends State<CookingScreen> {
     );
   }
 
-  Widget _dropdown(String value, List<String> items, Color bg, ColorScheme cs, ValueChanged<String?> onChanged) {
+  Widget _dropdown(
+    String value,
+    List<String> items,
+    Color bg,
+    ColorScheme cs,
+    ValueChanged<String?> onChanged,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: items.contains(value) ? value : items.first,
           isExpanded: true,
-          style: GoogleFonts.ibmPlexSans(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 14),
-          items: items.map((i) => DropdownMenuItem(value: i, child: Text(i))).toList(),
+          style: GoogleFonts.ibmPlexSans(
+            color: cs.onSurface,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+          items: items
+              .map((i) => DropdownMenuItem(value: i, child: Text(i)))
+              .toList(),
           onChanged: onChanged,
         ),
       ),

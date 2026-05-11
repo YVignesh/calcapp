@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class WaistHipScreen extends StatefulWidget {
@@ -19,8 +20,15 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
   String? _ratio;
   String? _category;
   Color? _categoryColor;
+  Map<TextEditingController, String> _errors = {};
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _waist, label: 'Waist circumference', min: 0),
+      FieldSpec(controller: _hip, label: 'Hip circumference', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final waist = double.tryParse(_waist.text);
     final hip = double.tryParse(_hip.text);
     if (waist == null || hip == null || hip == 0) return;
@@ -30,13 +38,27 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
     Color color;
 
     if (_sex == 'Male') {
-      if (ratio < 0.90) { category = 'Low risk'; color = const Color(0xFF10B981); }
-      else if (ratio < 1.00) { category = 'Moderate risk'; color = Colors.orange; }
-      else { category = 'High risk'; color = Colors.red; }
+      if (ratio < 0.90) {
+        category = 'Low risk';
+        color = const Color(0xFF10B981);
+      } else if (ratio < 1.00) {
+        category = 'Moderate risk';
+        color = Colors.orange;
+      } else {
+        category = 'High risk';
+        color = Colors.red;
+      }
     } else {
-      if (ratio < 0.80) { category = 'Low risk'; color = const Color(0xFF10B981); }
-      else if (ratio < 0.86) { category = 'Moderate risk'; color = Colors.orange; }
-      else { category = 'High risk'; color = Colors.red; }
+      if (ratio < 0.80) {
+        category = 'Low risk';
+        color = const Color(0xFF10B981);
+      } else if (ratio < 0.86) {
+        category = 'Moderate risk';
+        color = Colors.orange;
+      } else {
+        category = 'High risk';
+        color = Colors.red;
+      }
     }
 
     setState(() {
@@ -51,41 +73,80 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
     final unit = _isMetric ? 'cm' : 'in';
     return CalcScaffold(
       title: 'Waist-to-Hip Ratio',
-      description: 'WHR is a health indicator for cardiovascular risk. Measure at the navel (waist) and the widest point (hips).',
+      description:
+          'WHR is a health indicator for cardiovascular risk. Measure at the navel (waist) and the widest point (hips).',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('BIOLOGICAL SEX'),
-          Row(children: [
-            Expanded(child: _btn('Male', _sex == 'Male', () => setState(() => _sex = 'Male'))),
-            const SizedBox(width: 10),
-            Expanded(child: _btn('Female', _sex == 'Female', () => setState(() => _sex = 'Female'))),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: _btn(
+                  'Male',
+                  _sex == 'Male',
+                  () => setState(() => _sex = 'Male'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _btn(
+                  'Female',
+                  _sex == 'Female',
+                  () => setState(() => _sex = 'Female'),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('UNIT'),
-          Row(children: [
-            ChoiceChip(label: const Text('cm'), selected: _isMetric, onSelected: (_) => setState(() => _isMetric = true)),
-            const SizedBox(width: 8),
-            ChoiceChip(label: const Text('inches'), selected: !_isMetric, onSelected: (_) => setState(() => _isMetric = false)),
-          ]),
+          Row(
+            children: [
+              ChoiceChip(
+                label: const Text('cm'),
+                selected: _isMetric,
+                onSelected: (_) => setState(() => _isMetric = true),
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: const Text('inches'),
+                selected: !_isMetric,
+                onSelected: (_) => setState(() => _isMetric = false),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('WAIST CIRCUMFERENCE'),
-          TextField(
+          ValidatedField(
             controller: _waist,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(hintText: 'Measure at navel', suffixText: unit),
+            errorText: _errors[_waist],
+            decoration: InputDecoration(
+              hintText: 'Measure at navel',
+              suffixText: unit,
+            ),
           ),
           const SizedBox(height: 12),
           const SectionLabel('HIP CIRCUMFERENCE'),
-          TextField(
+          ValidatedField(
             controller: _hip,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(hintText: 'Measure at widest point', suffixText: unit),
+            errorText: _errors[_hip],
+            decoration: InputDecoration(
+              hintText: 'Measure at widest point',
+              suffixText: unit,
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_ratio != null) ...[
             const SizedBox(height: 24),
@@ -113,9 +174,14 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
           color: selected ? cs.primary : cs.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(label, style: GoogleFonts.ibmPlexSans(
-          color: selected ? cs.onPrimary : cs.onSurfaceVariant,
-          fontWeight: FontWeight.w700, fontSize: 14)),
+        child: Text(
+          label,
+          style: GoogleFonts.ibmPlexSans(
+            color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
       ),
     );
   }

@@ -61,7 +61,8 @@ class _AppShellState extends State<AppShell> {
         autofocus: false,
         onKeyEvent: (event) {
           if (event is KeyDownEvent) {
-            final meta = HardwareKeyboard.instance.isMetaPressed ||
+            final meta =
+                HardwareKeyboard.instance.isMetaPressed ||
                 HardwareKeyboard.instance.isControlPressed;
             if (meta && event.logicalKey == LogicalKeyboardKey.keyK) {
               _openPalette();
@@ -116,7 +117,9 @@ class _PhoneShell extends StatelessWidget {
     } catch (_) {}
 
     int selectedIndex = 0;
-    if (route == '/settings') { selectedIndex = 2; }
+    if (route == '/settings') {
+      selectedIndex = 2;
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -192,7 +195,7 @@ class _TopCategoryBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              'CalcApp',
+              'Calc Studio',
               style: GoogleFonts.ibmPlexSans(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
@@ -215,7 +218,9 @@ class _TopCategoryBar extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? cs.primary.withValues(alpha: 0.12)

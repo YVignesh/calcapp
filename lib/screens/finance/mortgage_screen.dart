@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class MortgageScreen extends StatefulWidget {
@@ -26,10 +27,44 @@ class _MortgageScreenState extends State<MortgageScreen> {
   String? _totalPayment;
   String? _totalInterest;
   String? _loanAmount;
+  Map<TextEditingController, String> _errors = {};
 
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _price, label: 'Home price', min: 0),
+      FieldSpec(
+        controller: _down,
+        label: 'Down payment',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _rate,
+        label: 'Interest rate',
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(controller: _years, label: 'Loan term', min: 0),
+      FieldSpec(
+        controller: _tax,
+        label: 'Annual property tax',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _insurance,
+        label: 'Annual insurance',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final price = double.tryParse(_price.text.replaceAll(',', ''));
     final down = double.tryParse(_down.text.replaceAll(',', '')) ?? 0;
     final r = double.tryParse(_rate.text);
@@ -37,7 +72,12 @@ class _MortgageScreenState extends State<MortgageScreen> {
     if (price == null || r == null || y == null || price <= 0 || y <= 0) return;
 
     final loan = price - down;
-    if (loan <= 0) return;
+    if (loan <= 0) {
+      setState(
+        () => _errors = {_down: 'Down payment must be less than home price'},
+      );
+      return;
+    }
 
     final monthlyRate = r / 100 / 12;
     final n = (y * 12).round();
@@ -46,7 +86,11 @@ class _MortgageScreenState extends State<MortgageScreen> {
     if (monthlyRate == 0) {
       pi = loan / n;
     } else {
-      pi = loan * monthlyRate * pow(1 + monthlyRate, n) / (pow(1 + monthlyRate, n) - 1);
+      pi =
+          loan *
+          monthlyRate *
+          pow(1 + monthlyRate, n) /
+          (pow(1 + monthlyRate, n) - 1);
     }
 
     final annualTax = double.tryParse(_tax.text.replaceAll(',', '')) ?? 0;
@@ -69,7 +113,8 @@ class _MortgageScreenState extends State<MortgageScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Mortgage Calculator',
-      description: 'Estimate your monthly mortgage payment including principal, interest, property tax, and insurance (PITI).',
+      description:
+          'Estimate your monthly mortgage payment including principal, interest, property tax, and insurance (PITI).',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -93,7 +138,13 @@ class _MortgageScreenState extends State<MortgageScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_monthly != null) ...[
             const SizedBox(height: 24),
@@ -105,7 +156,11 @@ class _MortgageScreenState extends State<MortgageScreen> {
                 InfoRow('Loan amount', _loanAmount!),
                 InfoRow('Principal & interest', _piPayment!),
                 InfoRow('Total paid', _totalPayment!),
-                InfoRow('Total interest', _totalInterest!, valueColor: Colors.redAccent),
+                InfoRow(
+                  'Total interest',
+                  _totalInterest!,
+                  valueColor: Colors.redAccent,
+                ),
               ],
             ),
           ],
@@ -114,11 +169,21 @@ class _MortgageScreenState extends State<MortgageScreen> {
     );
   }
 
-  Widget _field(TextEditingController ctrl, String hint, {String? prefix, String? suffix}) {
-    return TextField(
+  Widget _field(
+    TextEditingController ctrl,
+    String hint, {
+    String? prefix,
+    String? suffix,
+  }) {
+    return ValidatedField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(hintText: hint, prefixText: prefix, suffixText: suffix),
+      errorText: _errors[ctrl],
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixText: prefix,
+        suffixText: suffix,
+      ),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/calc_scaffold.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class FlooringScreen extends StatefulWidget {
@@ -19,8 +20,21 @@ class _FlooringScreenState extends State<FlooringScreen> {
   String? _area;
   String? _withWaste;
   String? _areaM2;
+  Map<TextEditingController, String> _errors = {};
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(controller: _length, label: 'Room length', min: 0),
+      FieldSpec(controller: _width, label: 'Room width', min: 0),
+      FieldSpec(
+        controller: _waste,
+        label: 'Waste factor',
+        min: 0,
+        allowZero: true,
+      ),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final l = double.tryParse(_length.text);
     final w = double.tryParse(_width.text);
     final waste = double.tryParse(_waste.text) ?? 10;
@@ -32,10 +46,18 @@ class _FlooringScreenState extends State<FlooringScreen> {
     double toM2;
     String suffix;
     switch (_unit) {
-      case 'feet': toM2 = 0.092903; suffix = 'sq ft';
-      case 'meters': toM2 = 1; suffix = 'm²';
-      case 'yards': toM2 = 0.836127; suffix = 'sq yd';
-      default: toM2 = 0.092903; suffix = 'sq ft';
+      case 'feet':
+        toM2 = 0.092903;
+        suffix = 'sq ft';
+      case 'meters':
+        toM2 = 1;
+        suffix = 'm²';
+      case 'yards':
+        toM2 = 0.836127;
+        suffix = 'sq yd';
+      default:
+        toM2 = 0.092903;
+        suffix = 'sq ft';
     }
 
     setState(() {
@@ -51,40 +73,68 @@ class _FlooringScreenState extends State<FlooringScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Flooring Calculator',
-      description: 'Calculate how many tiles, planks, or rolls of flooring you need for a room, including waste factor.',
+      description:
+          'Calculate how many tiles, planks, or rolls of flooring you need for a room, including waste factor.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('UNIT'),
           Wrap(
             spacing: 8,
-            children: ['feet', 'meters', 'yards'].map((u) => ChoiceChip(
-              label: Text(u),
-              selected: _unit == u,
-              onSelected: (_) => setState(() => _unit = u),
-            )).toList(),
+            children: ['feet', 'meters', 'yards']
+                .map(
+                  (u) => ChoiceChip(
+                    label: Text(u),
+                    selected: _unit == u,
+                    onSelected: (_) => setState(() => _unit = u),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 12),
-          Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('ROOM LENGTH'),
-              TextField(controller: _length,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(suffixText: _unit)),
-            ])),
-            const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SectionLabel('ROOM WIDTH'),
-              TextField(controller: _width,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(suffixText: _unit)),
-            ])),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('ROOM LENGTH'),
+                    ValidatedField(
+                      controller: _length,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_length],
+                      decoration: InputDecoration(suffixText: _unit),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionLabel('ROOM WIDTH'),
+                    ValidatedField(
+                      controller: _width,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      errorText: _errors[_width],
+                      decoration: InputDecoration(suffixText: _unit),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           const SectionLabel('WASTE FACTOR'),
-          TextField(
+          ValidatedField(
             controller: _waste,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            errorText: _errors[_waste],
             decoration: const InputDecoration(
               hintText: 'Extra for cuts & waste',
               suffixText: '%',
@@ -93,7 +143,13 @@ class _FlooringScreenState extends State<FlooringScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_withWaste != null) ...[
             const SizedBox(height: 24),

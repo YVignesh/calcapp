@@ -26,22 +26,26 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) { context.read<CurrencyProvider>().init(); }
+      if (mounted) {
+        context.read<CurrencyProvider>().init();
+      }
     });
   }
 
   void _swap() => setState(() {
-        final tmp = _from;
-        _from = _to;
-        _to = tmp;
-      });
+    final tmp = _from;
+    _from = _to;
+    _to = tmp;
+  });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final provider = context.watch<CurrencyProvider>();
     final amount = double.tryParse(_amountCtrl.text) ?? 1;
-    final result = provider.hasData ? provider.convert(amount, _from, _to) : null;
+    final result = provider.hasData
+        ? provider.convert(amount, _from, _to)
+        : null;
     final rate = provider.hasData ? provider.convert(1, _from, _to) : null;
 
     final currencies = provider.currencies;
@@ -49,7 +53,8 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
 
     return CalcScaffold(
       title: 'Currency Converter',
-      description: 'Convert between world currencies using live mid-market rates from the European Central Bank (api.frankfurter.app). Rates are cached for 30 minutes.',
+      description:
+          'Convert between world currencies using live mid-market rates from the European Central Bank (api.frankfurter.app). Rates are cached for 30 minutes.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,11 +69,17 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
               decoration: BoxDecoration(
                 color: AppTokens.danger.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(AppTokens.rCard),
-                border: Border.all(color: AppTokens.danger.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: AppTokens.danger.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.wifi_off_rounded, color: AppTokens.danger, size: 18),
+                  Icon(
+                    Icons.wifi_off_rounded,
+                    color: AppTokens.danger,
+                    size: 18,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -104,8 +115,12 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SectionLabel('FROM'),
-                    _currencyDropdown(sortedCodes, currencies, _from,
-                        (v) => setState(() => _from = v!)),
+                    _currencyDropdown(
+                      sortedCodes,
+                      currencies,
+                      _from,
+                      (v) => setState(() => _from = v!),
+                    ),
                   ],
                 ),
               ),
@@ -125,8 +140,12 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SectionLabel('TO'),
-                    _currencyDropdown(sortedCodes, currencies, _to,
-                        (v) => setState(() => _to = v!)),
+                    _currencyDropdown(
+                      sortedCodes,
+                      currencies,
+                      _to,
+                      (v) => setState(() => _to = v!),
+                    ),
                   ],
                 ),
               ),
@@ -140,7 +159,10 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
               color: const Color(0xFF10B981),
               rows: [
                 InfoRow('Amount', '$amount $_from'),
-                InfoRow('Exchange rate', '1 $_from = ${_rateFmt.format(rate)} $_to'),
+                InfoRow(
+                  'Exchange rate',
+                  '1 $_from = ${_rateFmt.format(rate)} $_to',
+                ),
               ],
             ),
           ],

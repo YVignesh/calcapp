@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/duration_field.dart';
+import '../../widgets/form_validator.dart';
 import '../../widgets/result_card.dart';
 
 class FutureValueScreen extends StatefulWidget {
@@ -22,9 +23,35 @@ class _FutureValueScreenState extends State<FutureValueScreen> {
   String _timeUnit = 'Years';
   String? _fv;
   String? _totalContrib;
+  Map<TextEditingController, String> _errors = {};
   final _fmt = NumberFormat('#,##0.00');
 
   void _calculate() {
+    final valid = FormValidator.run(context, [
+      FieldSpec(
+        controller: _pv,
+        label: 'Present value',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _pmt,
+        label: 'Monthly contribution',
+        required: false,
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(
+        controller: _rate,
+        label: 'Annual interest rate',
+        min: 0,
+        allowZero: true,
+      ),
+      FieldSpec(controller: _years, label: 'Time period', min: 0),
+    ], onErrors: (errors) => setState(() => _errors = errors));
+    if (!valid) return;
+
     final pv = double.tryParse(_pv.text.replaceAll(',', '')) ?? 0;
     final pmt = double.tryParse(_pmt.text.replaceAll(',', '')) ?? 0;
     final r = double.tryParse(_rate.text);
@@ -52,7 +79,8 @@ class _FutureValueScreenState extends State<FutureValueScreen> {
   Widget build(BuildContext context) {
     return CalcScaffold(
       title: 'Future Value',
-      description: 'Project the future value of an investment with a lump sum and regular monthly contributions, compounded over time. Time period can be days, months, or years.',
+      description:
+          'Project the future value of an investment with a lump sum and regular monthly contributions, compounded over time. Time period can be days, months, or years.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,12 +100,17 @@ class _FutureValueScreenState extends State<FutureValueScreen> {
             hint: 'e.g. 10',
             onUnitChanged: (u) => setState(() => _timeUnit = u),
           ),
+          if (_errors[_years] != null) _errorText(_errors[_years]!),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate',
-                style: GoogleFonts.ibmPlexSans(
-                    fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text(
+              'Calculate',
+              style: GoogleFonts.ibmPlexSans(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
           ),
           if (_fv != null) ...[
             const SizedBox(height: 24),
@@ -93,13 +126,35 @@ class _FutureValueScreenState extends State<FutureValueScreen> {
     );
   }
 
-  Widget _field(TextEditingController ctrl, String hint,
-      {String? prefix, String? suffix}) {
-    return TextField(
+  Widget _field(
+    TextEditingController ctrl,
+    String hint, {
+    String? prefix,
+    String? suffix,
+  }) {
+    return ValidatedField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      errorText: _errors[ctrl],
       decoration: InputDecoration(
-          hintText: hint, prefixText: prefix, suffixText: suffix),
+        hintText: hint,
+        prefixText: prefix,
+        suffixText: suffix,
+      ),
+    );
+  }
+
+  Widget _errorText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text(
+        text,
+        style: GoogleFonts.ibmPlexSans(
+          color: Theme.of(context).colorScheme.error,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 
