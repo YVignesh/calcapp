@@ -18,7 +18,7 @@ import 'package:math_expressions/math_expressions.dart';
 // `exp(`, `e^`, etc. — only bare `e` standing alone as Euler's number.
 // ---------------------------------------------------------------------------
 
-/// Binds `pi` and `e` as variables in [cm]. Call this before every evaluate()
+/// Binds `pi` and `e` as variables in [cm]. Call this before every evaluation
 /// in scientific/FnEvaluator contexts so constants are always resolved.
 void bindStandardConstants(ContextModel cm) {
   cm.bindVariable(Variable('pi'), Number(math.pi));
@@ -135,8 +135,8 @@ class FnEvaluator {
   double? call(double x) {
     try {
       _cm.bindVariable(_x, Number(x));
-      final r = _exp.evaluate(EvaluationType.REAL, _cm);
-      if (r is num && r.isFinite) return r.toDouble();
+      final r = RealEvaluator(_cm).evaluate(_exp);
+      if (r.isFinite) return r.toDouble();
       return null;
     } catch (_) {
       return null;

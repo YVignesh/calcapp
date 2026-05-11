@@ -34,7 +34,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       final p = GrammarParser();
       final exp = p.parse(cleaned);
       final cm = ContextModel();
-      final result = exp.evaluate(EvaluationType.REAL, cm) as double;
+      final result = RealEvaluator(cm).evaluate(exp).toDouble();
       if (result.isNaN || result.isInfinite) { return 'Error'; }
       if (result == result.truncateToDouble()) {
         return result.toStringAsFixed(0);

@@ -44,7 +44,7 @@ class _ScientificScreenState extends State<ScientificScreen> {
       final exp = p.parse(cleaned);
       final cm = ContextModel();
       bindStandardConstants(cm);
-      final result = exp.evaluate(EvaluationType.REAL, cm) as double;
+      final result = RealEvaluator(cm).evaluate(exp).toDouble();
       if (result.isNaN || result.isInfinite) { return 'Error'; }
       if (result == result.truncateToDouble()) {
         return result.toStringAsFixed(0);
