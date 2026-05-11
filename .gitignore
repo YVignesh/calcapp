@@ -55,4 +55,3 @@ flutter_debug_*.log
 
 # Cloudflare / Wrangler local state
 .wrangler/
-wrangler.jsonc

@@ -1,0 +1,11 @@
+{
+  "name": "calcapp",
+  "compatibility_date": "2026-05-11",
+  "assets": {
+    "directory": "./build/web",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
