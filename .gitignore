@@ -18,7 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# Claude Code — keep agents/skills/CLAUDE.md/.mcp.json in VCS; local settings are personal
+# Claude Code - keep agents/skills/CLAUDE.md/.mcp.json in VCS; local settings are personal
 .claude/settings.local.json
 
 # The .vscode folder contains launch configuration and tasks you configure in
@@ -50,3 +50,9 @@ app.*.map.json
 # others
 chrome-debug-profile/
 audit_screens/
+audit_route_smoke*.json
+flutter_debug_*.log
+
+# Cloudflare / Wrangler local state
+.wrangler/
+wrangler.jsonc

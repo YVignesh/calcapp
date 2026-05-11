@@ -1,3 +1,74 @@
-# Cloudflare Pages SPA fallback for Flutter path URLs.
-# Static files such as /sitemap.xml and /robots.txt are served directly.
-/* /index.html 200
+# Cloudflare Pages fallback rules for Flutter path URLs.
+# Keep these explicit instead of `/* /index.html 200`; Workers static-assets
+# deploys can reject a catch-all rule as an infinite loop.
+
+/help /index.html 200
+/settings /index.html 200
+/category/calculator /index.html 200
+/category/finance /index.html 200
+/category/units /index.html 200
+/category/health /index.html 200
+/category/cooking /index.html 200
+/category/home /index.html 200
+/category/math /index.html 200
+
+/calculator /index.html 200
+/scientific /index.html 200
+/advanced-math /index.html 200
+/graph /index.html 200
+
+/compound-interest /index.html 200
+/loan /index.html 200
+/mortgage /index.html 200
+/apy /index.html 200
+/cagr /index.html 200
+/currency /index.html 200
+/future-value /index.html 200
+/retirement /index.html 200
+/savings-goal /index.html 200
+/salary /index.html 200
+/pay-raise /index.html 200
+/credit-card /index.html 200
+/stock-average /index.html 200
+/tip /index.html 200
+/sales-tax /index.html 200
+/discount /index.html 200
+
+/units/length /index.html 200
+/units/weight /index.html 200
+/units/volume /index.html 200
+/units/temperature /index.html 200
+/units/area /index.html 200
+/units/speed /index.html 200
+/units/time /index.html 200
+/units/data /index.html 200
+/units/pressure /index.html 200
+/units/energy /index.html 200
+/units/power /index.html 200
+/units/fuel /index.html 200
+
+/bmi /index.html 200
+/bmr /index.html 200
+/steps /index.html 200
+/waist-hip /index.html 200
+/pregnancy /index.html 200
+
+/cooking /index.html 200
+/oven-temp /index.html 200
+
+/square-footage /index.html 200
+/flooring /index.html 200
+/electricity /index.html 200
+/mulch /index.html 200
+/paint /index.html 200
+
+/percentage /index.html 200
+/fraction /index.html 200
+/statistics /index.html 200
+/quadratic /index.html 200
+/triangle /index.html 200
+/age /index.html 200
+/date-diff /index.html 200
+/grade /index.html 200
+/roman /index.html 200
+/base-converter /index.html 200

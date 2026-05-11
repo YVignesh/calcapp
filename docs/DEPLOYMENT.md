@@ -15,6 +15,8 @@ Use **Cloudflare Pages**. The domain is already managed in Cloudflare, the app i
 
 Connect the GitHub repository in **Cloudflare Dashboard > Workers & Pages > Create application > Pages > Connect to Git**.
 
+Important: use a **Pages** project, not a Workers deploy command. If the log says `Executing user deploy command: npx wrangler deploy`, Cloudflare is deploying the raw `web/` folder instead of the Flutter release build. That is wrong for this app.
+
 Use these build settings:
 
 | Setting | Value |
@@ -24,11 +26,34 @@ Use these build settings:
 | Build output directory | `build/web` |
 | Root directory | `/` |
 
+Do **not** set:
+
+| Setting | Wrong value |
+| --- | --- |
+| Deploy command | `npx wrangler deploy` |
+| Output directory | `web` |
+
+The `web/` directory is only Flutter's source web shell. The deployable site is generated into `build/web` after `flutter build web --release`.
+
 If the Cloudflare build image does not include Flutter, use one of these options:
 
 1. Build with GitHub Actions and deploy `build/web` to Cloudflare Pages.
 2. Use Cloudflare Pages Direct Upload after running `flutter build web --release` locally.
 3. Configure the Pages build to install Flutter before the build command.
+
+For a quick manual deploy from your machine:
+
+```bash
+flutter build web --release
+npx wrangler pages deploy build/web --project-name calc-studio
+```
+
+For Git-connected deploys, the preferred project settings are still:
+
+```text
+Build command: flutter build web --release
+Build output directory: build/web
+```
 
 ## Domain Setup
 
