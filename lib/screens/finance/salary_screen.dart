@@ -125,7 +125,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Convert',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_results != null) ...[
             const SizedBox(height: 24),

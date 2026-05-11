@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/density.dart';
+import '../core/tokens.dart';
+import 'result_value.dart';
 
+export 'result_value.dart' show ResultValue;
+
+/// Console-style result card. 1-px border, 2-px top-edge accent stripe,
+/// no alpha-flooded background — just border + stripe.
+///
+/// Public API is unchanged from the previous version:
+///   ResultCard(label, value, subtitle?, color?, rows?)
 class ResultCard extends StatelessWidget {
   final String label;
   final String value;
@@ -21,76 +31,58 @@ class ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tok = DensityScope.of(context);
     final cardColor = color ?? cs.primary;
-
-    void doCopy() {
-      Clipboard.setData(ClipboardData(text: value));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Copied: $value',
-              style: GoogleFonts.nunito(fontWeight: FontWeight.w600)),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+    final surfaceColor = isLight ? AppTokens.lBg1 : AppTokens.bg1;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: cardColor.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cardColor.withValues(alpha: 0.3), width: 1.5),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(AppTokens.rCard),
+        border: Border.all(color: borderColor),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: cardColor,
-                  letterSpacing: 0.4,
-                ),
-              ),
-              GestureDetector(
-                onTap: doCopy,
-                child: Icon(Icons.copy_rounded, size: 16, color: cardColor),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: GoogleFonts.nunito(
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              color: cs.onSurface,
-              letterSpacing: -0.5,
-            ),
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              subtitle!,
-              style: GoogleFonts.nunito(
-                fontSize: 13,
-                color: cs.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTokens.rCard),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 2-px top accent stripe
+            Container(height: 2, color: cardColor),
+            Padding(
+              padding: EdgeInsets.all(tok.cardPad),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ResultValue(
+                    label: label,
+                    value: value,
+                    accent: cardColor,
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle!,
+                      style: GoogleFonts.ibmPlexSans(
+                        fontSize: 12,
+                        color: cs.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                  if (rows != null && rows!.isNotEmpty) ...[
+                    SizedBox(height: tok.vGap),
+                    Divider(height: 1, color: borderColor),
+                    SizedBox(height: tok.vGap * 0.75),
+                    ...rows!.map((r) => _buildRow(context, r)),
+                  ],
+                ],
               ),
             ),
           ],
-          if (rows != null && rows!.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            const Divider(height: 1),
-            const SizedBox(height: 10),
-            ...rows!.map((r) => _buildRow(context, r)),
-          ],
-        ],
+        ),
       ),
     );
   }
@@ -102,20 +94,24 @@ class ResultCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            row.label,
-            style: GoogleFonts.nunito(
-              fontSize: 13,
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              row.label,
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 12,
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
+          const SizedBox(width: 8),
           Text(
             row.value,
-            style: GoogleFonts.nunito(
-              fontSize: 13,
+            style: GoogleFonts.ibmPlexMono(
+              fontSize: 12,
               color: row.valueColor ?? cs.onSurface,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
         ],
@@ -124,9 +120,24 @@ class ResultCard extends StatelessWidget {
   }
 }
 
+/// A label/value pair for use inside [ResultCard.rows].
 class InfoRow {
   final String label;
   final String value;
   final Color? valueColor;
   const InfoRow(this.label, this.value, {this.valueColor});
+}
+
+/// Clipboard copy utility used by other widgets.
+void copyToClipboard(BuildContext context, String text) {
+  Clipboard.setData(ClipboardData(text: text));
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        'Copied: $text',
+        style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w500),
+      ),
+      duration: const Duration(seconds: 2),
+    ),
+  );
 }

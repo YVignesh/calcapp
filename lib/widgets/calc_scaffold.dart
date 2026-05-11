@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
+import '../core/density.dart';
+import '../core/layout.dart';
+import '../core/tokens.dart';
 import '../data/tools.dart';
+import '../providers/prefs_provider.dart';
 
-/// The shell every tool screen sits in. It auto-detects which category the
-/// current route belongs to and themes the screen with that category's colour:
-/// a gradient app-bar header, an accent-tinted description banner, and an
-/// accent-tinted body (buttons, focus borders, selection, progress).
-class CalcScaffold extends StatelessWidget {
+/// The shell every tool screen returns.
+///
+/// Console version: compact 48-px non-sliver header (back ← title ← category
+/// tag · help icon). Body constrained to 720 px max, density-aware padding.
+/// Description becomes a tight 1-px bordered card with a 2-px left edge in
+/// category color. No gradient flood, no per-category Theme override.
+///
+/// Public API is unchanged: CalcScaffold(title:, description:, child:, actions?:)
+class CalcScaffold extends StatefulWidget {
   final String title;
   final String? description;
   final Widget child;
@@ -23,6 +31,24 @@ class CalcScaffold extends StatelessWidget {
     this.actions,
   });
 
+  @override
+  State<CalcScaffold> createState() => _CalcScaffoldState();
+}
+
+class _CalcScaffoldState extends State<CalcScaffold> {
+  @override
+  void initState() {
+    super.initState();
+    // Record visit in recents.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      try {
+        final route = GoRouterState.of(context).uri.path;
+        context.read<PrefsProvider>().push(route);
+      } catch (_) {}
+    });
+  }
+
   static String? _routeOf(BuildContext context) {
     try {
       return GoRouterState.of(context).uri.path;
@@ -33,177 +59,121 @@ class CalcScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs = Theme.of(context).colorScheme;
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final tok = DensityScope.of(context);
+    final bpi = BreakpointInfo.of(context);
 
     final route = _routeOf(context);
     final cat = route == null ? null : categoryForRoute(route);
-    final tool = route == null ? null : toolForRoute(route);
-    final c1 = cat?.gradient.first ?? cs.primary;
-    final c2 = cat?.gradient.last ?? cs.primary;
-    final headerIcon = tool?.icon ?? cat?.icon ?? Icons.calculate_rounded;
 
-    final tinted = theme.copyWith(
-      colorScheme: cs.copyWith(
-        primary: c1,
-        primaryContainer: Color.alphaBlend(
-            c1.withValues(alpha: theme.brightness == Brightness.light ? 0.16 : 0.32),
-            cs.surface),
-        onPrimaryContainer: cs.onSurface,
-      ),
-      primaryColor: c1,
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: (theme.elevatedButtonTheme.style ?? const ButtonStyle()).copyWith(
-          backgroundColor: WidgetStatePropertyAll(c1),
-          foregroundColor: const WidgetStatePropertyAll(Colors.white),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: c1,
-          side: BorderSide(color: c1.withValues(alpha: 0.5)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          textStyle: GoogleFonts.nunito(fontWeight: FontWeight.w700),
-        ),
-      ),
-      inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: c1, width: 2),
-        ),
-      ),
-      textSelectionTheme: TextSelectionThemeData(
-        cursorColor: c1,
-        selectionColor: c1.withValues(alpha: 0.3),
-        selectionHandleColor: c1,
-      ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(color: c1),
-    );
+    // Category accent color: the 1-px dot/tag/stripe cue. Falls back to primary.
+    final catColor = cat != null ? cat.gradient.first : cs.primary;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              expandedHeight: 138,
-              backgroundColor: c1,
-              surfaceTintColor: Colors.transparent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 2,
-              systemOverlayStyle: SystemUiOverlayStyle.light,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-                color: Colors.white,
-                onPressed: () =>
-                    context.canPop() ? context.pop() : context.go('/'),
-              ),
-              actions: [
-                ...?actions,
-                IconButton(
-                  icon: const Icon(Icons.help_outline_rounded),
-                  color: Colors.white,
-                  tooltip: 'Help & guide',
-                  onPressed: () => context.push('/help'),
-                ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsetsDirectional.only(start: 56, bottom: 14, end: 16),
-                title: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 19,
-                    color: Colors.white,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [c1, c2],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+    final bgColor = isLight ? AppTokens.lBg0 : AppTokens.bg0;
+
+    // Max content width: 720 px, centered.
+    final hPad = tok.pagePadH;
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── 48-px compact header ───────────────────────────────────────
+            SizedBox(
+              height: 48,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: hPad * 0.5),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18),
+                      color: cs.onSurface,
+                      tooltip: 'Back',
+                      onPressed: () =>
+                          context.canPop() ? context.pop() : context.go('/'),
                     ),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        right: -12,
-                        bottom: -16,
-                        child: Icon(
-                          headerIcon,
-                          size: 132,
-                          color: Colors.white.withValues(alpha: 0.16),
-                        ),
+                    // Category dot
+                    Container(
+                      width: 6,
+                      height: 6,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: catColor,
+                        shape: BoxShape.circle,
                       ),
-                      if (cat != null)
-                        Positioned(
-                          left: 20,
-                          bottom: 44,
-                          child: Text(
-                            cat.name.toUpperCase(),
-                            style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 11,
-                              letterSpacing: 1.2,
-                              color: Colors.white.withValues(alpha: 0.85),
-                            ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                          letterSpacing: -0.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // Category tag — small caps, only on wider screens
+                    if (cat != null && bpi.hasRail)
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: catColor.withValues(alpha: 0.4)),
+                          borderRadius:
+                              BorderRadius.circular(AppTokens.rChip),
+                        ),
+                        child: Text(
+                          cat.name.toUpperCase(),
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: catColor,
+                            letterSpacing: 0.8,
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                    ...?widget.actions,
+                    IconButton(
+                      icon: const Icon(Icons.help_outline_rounded, size: 18),
+                      color: cs.onSurfaceVariant,
+                      tooltip: 'Help & guide',
+                      onPressed: () => context.push('/help'),
+                    ),
+                  ],
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: SafeArea(
-                top: false,
-                child: Theme(
-                  data: tinted,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 32),
+            // ── Hairline separator ─────────────────────────────────────────
+            Divider(height: 1, thickness: 1, color: borderColor),
+            // ── Scrollable body ───────────────────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                    hPad, tok.vGap * 1.5, hPad, 32),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 720),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (description != null)
+                        if (widget.description != null)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 18),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: c1.withValues(alpha: 0.10),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                    color: c1.withValues(alpha: 0.22)),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.info_outline_rounded,
-                                      size: 16, color: c1),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      description!,
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 12.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: cs.onSurfaceVariant,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            padding:
+                                EdgeInsets.only(bottom: tok.vGap * 1.5),
+                            child: _DescriptionBanner(
+                              text: widget.description!,
+                              accentColor: catColor,
                             ),
                           ),
-                        child,
+                        widget.child,
                       ],
                     ),
                   ),
@@ -217,27 +187,80 @@ class CalcScaffold extends StatelessWidget {
   }
 }
 
-class SectionLabel extends StatelessWidget {
+class _DescriptionBanner extends StatelessWidget {
   final String text;
-  const SectionLabel(this.text, {super.key});
+  final Color accentColor;
+
+  const _DescriptionBanner({required this.text, required this.accentColor});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8, top: 4),
-      child: Text(
-        text,
-        style: GoogleFonts.nunito(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          letterSpacing: 0.5,
+    final cs = Theme.of(context).colorScheme;
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+    final bgColor = isLight ? AppTokens.lBg2 : AppTokens.bg2;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(AppTokens.rCard),
+        border: Border.all(color: borderColor),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTokens.rCard),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 2-px left-edge accent stripe
+              Container(width: 2, color: accentColor),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 10),
+                  child: Text(
+                    text,
+                    style: GoogleFonts.ibmPlexSans(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
+                      color: cs.onSurfaceVariant,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+/// Small grey uppercase field label. Used in every tool screen.
+class SectionLabel extends StatelessWidget {
+  final String text;
+  const SectionLabel(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final tok = DensityScope.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6, top: 2),
+      child: Text(
+        text,
+        style: GoogleFonts.ibmPlexSans(
+          fontSize: tok.sectionLabelPx,
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          letterSpacing: 0.6,
+        ),
+      ),
+    );
+  }
+}
+
+/// A label/value row. Kept for backward compatibility.
 class InfoTile extends StatelessWidget {
   final String label;
   final String value;
@@ -254,24 +277,25 @@ class InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
               color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
             ),
           ),
           Text(
             value,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexMono(
               color: valueColor ?? cs.onSurface,
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
         ],

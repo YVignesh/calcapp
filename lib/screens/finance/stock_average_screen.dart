@@ -83,7 +83,7 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: Text('${i + 1}',
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.ibmPlexSans(
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                             color: cs.onPrimaryContainer)),
@@ -123,13 +123,13 @@ class _StockAverageScreenState extends State<StockAverageScreen> {
             onPressed: _addRow,
             icon: const Icon(Icons.add_rounded),
             label: Text('Add purchase',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_avgPrice != null) ...[

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -58,7 +59,7 @@ class _DateDiffScreenState extends State<DateDiffScreen> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
 
     return CalcScaffold(
       title: 'Date Difference',
@@ -74,7 +75,7 @@ class _DateDiffScreenState extends State<DateDiffScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_days != null) ...[
             const SizedBox(height: 24),
@@ -105,7 +106,7 @@ class _DateDiffScreenState extends State<DateDiffScreen> {
             Icon(Icons.calendar_today_rounded, color: cs.primary, size: 18),
             const SizedBox(width: 10),
             Text(_fmt.format(date),
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w600, fontSize: 15)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 15)),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -76,8 +77,8 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.light
-                    ? const Color(0xFFEEEEF5)
-                    : const Color(0xFF2C2C2E),
+                    ? AppTokens.lBg2
+                    : AppTokens.bg2,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
@@ -86,7 +87,7 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
                   const SizedBox(width: 12),
                   Text(
                     _lmpDate != null ? _dateFmt.format(_lmpDate!) : 'Select date',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                       color: _lmpDate != null ? cs.onSurface : cs.onSurfaceVariant,
@@ -143,9 +144,9 @@ class _PregnancyScreenState extends State<PregnancyScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: Text(m.$1,
-                    style: GoogleFonts.nunito(fontWeight: FontWeight.w600, fontSize: 14))),
+                    style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 14))),
                 Text(_dateFmt.format(m.$2),
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w500, fontSize: 13)),
               ],

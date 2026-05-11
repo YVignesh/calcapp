@@ -95,7 +95,7 @@ class _RomanScreenState extends State<RomanScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_result != null) ...[
             const SizedBox(height: 24),
@@ -132,10 +132,10 @@ class _RomanScreenState extends State<RomanScreen> {
             child: RichText(
               text: TextSpan(children: [
                 TextSpan(text: p.$1,
-                    style: GoogleFonts.nunito(fontWeight: FontWeight.w800,
+                    style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w800,
                         fontSize: 16, color: cs.primary)),
                 TextSpan(text: ' = ${p.$2}',
-                    style: GoogleFonts.nunito(fontWeight: FontWeight.w600,
+                    style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600,
                         fontSize: 14, color: cs.onPrimaryContainer)),
               ]),
             ),
@@ -157,7 +157,7 @@ class _RomanScreenState extends State<RomanScreen> {
           color: selected ? cs.primary : cs.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(label, style: GoogleFonts.nunito(
+        child: Text(label, style: GoogleFonts.ibmPlexSans(
           color: selected ? cs.onPrimary : cs.onSurfaceVariant,
           fontWeight: FontWeight.w700, fontSize: 13)),
       ),

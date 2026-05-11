@@ -76,7 +76,7 @@ class _FutureValueScreenState extends State<FutureValueScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_fv != null) ...[

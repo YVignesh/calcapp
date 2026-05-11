@@ -7,11 +7,9 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeMode get mode => _mode;
 
-  ThemeProvider() {
-    _load();
-  }
+  ThemeProvider();
 
-  Future<void> _load() async {
+  Future<void> loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_key);
     if (stored == 'light') {
@@ -30,6 +28,8 @@ class ThemeProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_key, mode.name);
   }
+
+  bool get isDark => _mode == ThemeMode.dark;
 
   void toggle(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

@@ -72,7 +72,7 @@ class _TipScreenState extends State<TipScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_tipAmount != null) ...[
             const SizedBox(height: 24),
@@ -99,9 +99,9 @@ class _TipScreenState extends State<TipScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('0%', style: GoogleFonts.nunito(fontSize: 12, color: cs.onSurfaceVariant)),
-            Text('${_tipPct.round()}%', style: GoogleFonts.nunito(fontSize: 18, fontWeight: FontWeight.w800, color: cs.primary)),
-            Text('30%', style: GoogleFonts.nunito(fontSize: 12, color: cs.onSurfaceVariant)),
+            Text('0%', style: GoogleFonts.ibmPlexSans(fontSize: 12, color: cs.onSurfaceVariant)),
+            Text('${_tipPct.round()}%', style: GoogleFonts.ibmPlexSans(fontSize: 18, fontWeight: FontWeight.w800, color: cs.primary)),
+            Text('30%', style: GoogleFonts.ibmPlexSans(fontSize: 12, color: cs.onSurfaceVariant)),
           ],
         ),
         Slider(
@@ -139,7 +139,7 @@ class _TipScreenState extends State<TipScreen> {
                   color: selected ? cs.primary : cs.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text('$pct%', style: GoogleFonts.nunito(
+                child: Text('$pct%', style: GoogleFonts.ibmPlexSans(
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                   color: selected ? cs.onPrimary : cs.onSurfaceVariant,

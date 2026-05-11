@@ -226,17 +226,10 @@ class _GraphScreenState extends State<GraphScreen> {
           ),
           const SizedBox(height: 16),
           MathKeypad(controller: _active, onSubmit: _plot, submitLabel: 'PLOT'),
-          const SizedBox(height: 8),
-          ElevatedButton.icon(
-            onPressed: _plot,
-            icon: const Icon(Icons.show_chart_rounded),
-            label: Text('Plot',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
-          ),
           if (_error != null) ...[
             const SizedBox(height: 14),
             Text(_error!,
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     color: cs.error, fontSize: 13.5, fontWeight: FontWeight.w700)),
           ],
           if (_plotted) ...[

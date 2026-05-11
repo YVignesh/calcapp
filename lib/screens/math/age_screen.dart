@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -86,7 +87,7 @@ class _AgeScreenState extends State<AgeScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+              color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -95,7 +96,7 @@ class _AgeScreenState extends State<AgeScreen> {
                 const SizedBox(width: 10),
                 Text(
                   date != null ? _fmt.format(date) : 'Select date',
-                  style: GoogleFonts.nunito(
+                  style: GoogleFonts.ibmPlexSans(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: date != null ? cs.onSurface : cs.onSurfaceVariant,
@@ -123,7 +124,7 @@ class _AgeScreenState extends State<AgeScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_years != null) ...[
             const SizedBox(height: 24),

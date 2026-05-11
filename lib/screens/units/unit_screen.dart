@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/tokens.dart';
 import '../../data/units_data.dart';
 import '../../widgets/calc_scaffold.dart';
 
@@ -82,14 +83,14 @@ class _UnitScreenState extends State<UnitScreen> {
             keyboardType:
                 const TextInputType.numberWithOptions(decimal: true, signed: true),
             onChanged: (_) => _convert(),
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
             decoration: InputDecoration(
               hintText: 'Enter value',
               suffixText: _from.symbol,
-              suffixStyle: GoogleFonts.nunito(
+              suffixStyle: GoogleFonts.ibmPlexSans(
                 fontWeight: FontWeight.w600,
                 color: cs.primary,
               ),
@@ -126,7 +127,7 @@ class _UnitScreenState extends State<UnitScreen> {
                 children: [
                   Text(
                     'Result',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: cs.primary,
@@ -141,7 +142,7 @@ class _UnitScreenState extends State<UnitScreen> {
                       Expanded(
                         child: Text(
                           _result,
-                          style: GoogleFonts.nunito(
+                          style: GoogleFonts.ibmPlexSans(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
                             color: cs.onPrimaryContainer,
@@ -151,7 +152,7 @@ class _UnitScreenState extends State<UnitScreen> {
                       ),
                       Text(
                         _to.symbol,
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.ibmPlexSans(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: cs.primary,
@@ -162,7 +163,7 @@ class _UnitScreenState extends State<UnitScreen> {
                   const SizedBox(height: 4),
                   Text(
                     '${_inputCtrl.text} ${_from.symbol} = $_result ${_to.symbol}',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                       fontSize: 13,
                       color: cs.onPrimaryContainer.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
@@ -183,8 +184,8 @@ class _UnitScreenState extends State<UnitScreen> {
   Widget _unitDropdown(UnitDef selected, ValueChanged<UnitDef?> onChanged) {
     final cs = Theme.of(context).colorScheme;
     final bgColor = Theme.of(context).brightness == Brightness.light
-        ? const Color(0xFFEEEEF5)
-        : const Color(0xFF2C2C2E);
+        ? AppTokens.lBg2
+        : AppTokens.bg2;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -195,7 +196,7 @@ class _UnitScreenState extends State<UnitScreen> {
         child: DropdownButton<UnitDef>(
           value: selected,
           isExpanded: true,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.ibmPlexSans(
               color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
           items: _typeDef.units
               .map((u) => DropdownMenuItem(
@@ -231,10 +232,10 @@ class _UnitScreenState extends State<UnitScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('${u.name} (${u.symbol})',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     color: cs.onSurfaceVariant, fontWeight: FontWeight.w600, fontSize: 14)),
             Text(formatted,
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     color: u == _to ? cs.primary : cs.onSurface,
                     fontWeight: u == _to ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 14)),

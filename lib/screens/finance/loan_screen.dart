@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/duration_field.dart';
 import '../../widgets/result_card.dart';
@@ -131,7 +132,7 @@ class _LoanScreenState extends State<LoanScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_monthly != null) ...[
             const SizedBox(height: 24),
@@ -166,7 +167,7 @@ class _LoanScreenState extends State<LoanScreen> {
     final principalFraction = p / total;
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -174,7 +175,7 @@ class _LoanScreenState extends State<LoanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Principal vs Interest', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurfaceVariant)),
+          Text('Principal vs Interest', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurfaceVariant)),
           const SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
@@ -213,7 +214,7 @@ class _LoanScreenState extends State<LoanScreen> {
       children: [
         Container(width: 10, height: 10, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
         const SizedBox(width: 6),
-        Text(label, style: GoogleFonts.nunito(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant)),
+        Text(label, style: GoogleFonts.ibmPlexSans(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant)),
       ],
     );
   }
@@ -221,14 +222,14 @@ class _LoanScreenState extends State<LoanScreen> {
   Widget _extraPaymentCard() {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Extra Payment Analysis', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 13, color: cs.primary)),
+          Text('Extra Payment Analysis', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13, color: cs.primary)),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -258,9 +259,9 @@ class _LoanScreenState extends State<LoanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: GoogleFonts.nunito(fontSize: 11, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant, letterSpacing: 0.3)),
+          Text(label, style: GoogleFonts.ibmPlexSans(fontSize: 11, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant, letterSpacing: 0.3)),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.nunito(fontSize: 13, fontWeight: FontWeight.w800, color: color)),
+          Text(value, style: GoogleFonts.ibmPlexSans(fontSize: 13, fontWeight: FontWeight.w800, color: color)),
         ],
       ),
     );
@@ -290,7 +291,7 @@ class _LoanScreenState extends State<LoanScreen> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+            color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
@@ -329,7 +330,7 @@ class _LoanScreenState extends State<LoanScreen> {
                   onPressed: () => setState(() => _showFull = !_showFull),
                   child: Text(
                     _showFull ? 'Show less' : 'Show all ${_schedule.length} months',
-                    style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
+                    style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700),
                   ),
                 ),
             ],
@@ -342,7 +343,7 @@ class _LoanScreenState extends State<LoanScreen> {
   Widget _th(String text, {required int flex}) => Expanded(
         flex: flex,
         child: Text(text,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -352,7 +353,7 @@ class _LoanScreenState extends State<LoanScreen> {
   Widget _td(String text, {required int flex, Color? color, bool bold = false}) => Expanded(
         flex: flex,
         child: Text(text,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
                 fontSize: 11,
                 fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
                 color: color ?? Theme.of(context).colorScheme.onSurface)),
@@ -366,7 +367,7 @@ class _LoanScreenState extends State<LoanScreen> {
     Clipboard.setData(ClipboardData(text: buf.toString()));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Schedule copied as CSV', style: GoogleFonts.nunito(fontWeight: FontWeight.w600)),
+        content: Text('Schedule copied as CSV', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600)),
         duration: const Duration(seconds: 2),
       ),
     );

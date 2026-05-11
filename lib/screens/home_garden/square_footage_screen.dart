@@ -84,12 +84,12 @@ class _SquareFootageScreenState extends State<SquareFootageScreen> {
               width: TextEditingController(),
             ))),
             icon: const Icon(Icons.add_rounded),
-            label: Text('Add room', style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+            label: Text('Add room', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_total != null) ...[
             const SizedBox(height: 24),

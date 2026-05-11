@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -105,7 +106,7 @@ class _CookingScreenState extends State<CookingScreen> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final dropColor = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final dropColor = isLight ? AppTokens.lBg2 : AppTokens.bg2;
 
     return CalcScaffold(
       title: 'Cooking Converter',
@@ -164,7 +165,7 @@ class _CookingScreenState extends State<CookingScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_result.isNotEmpty) ...[
             const SizedBox(height: 24),
@@ -188,7 +189,7 @@ class _CookingScreenState extends State<CookingScreen> {
         child: DropdownButton<String>(
           value: items.contains(value) ? value : items.first,
           isExpanded: true,
-          style: GoogleFonts.nunito(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 14),
+          style: GoogleFonts.ibmPlexSans(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 14),
           items: items.map((i) => DropdownMenuItem(value: i, child: Text(i))).toList(),
           onChanged: onChanged,
         ),

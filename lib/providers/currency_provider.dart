@@ -16,6 +16,7 @@ class CurrencyProvider extends ChangeNotifier {
   String? get error => _error;
   String get base => _base;
   bool get hasData => _rates.isNotEmpty;
+  bool get hasError => _error != null && _rates.isEmpty;
 
   Future<void> init() async {
     await Future.wait([fetchCurrencies(), fetchRates('USD')]);

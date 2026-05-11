@@ -103,7 +103,7 @@ class _RetirementScreenState extends State<RetirementScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_nestEgg != null) ...[

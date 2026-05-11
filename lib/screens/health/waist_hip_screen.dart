@@ -85,7 +85,7 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_ratio != null) ...[
             const SizedBox(height: 24),
@@ -113,7 +113,7 @@ class _WaistHipScreenState extends State<WaistHipScreen> {
           color: selected ? cs.primary : cs.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(label, style: GoogleFonts.nunito(
+        child: Text(label, style: GoogleFonts.ibmPlexSans(
           color: selected ? cs.onPrimary : cs.onSurfaceVariant,
           fontWeight: FontWeight.w700, fontSize: 14)),
       ),

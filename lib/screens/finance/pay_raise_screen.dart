@@ -91,7 +91,7 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_newSalary != null) ...[
             const SizedBox(height: 24),
@@ -125,7 +125,7 @@ class _PayRaiseScreenState extends State<PayRaiseScreen> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.ibmPlexSans(
             color: selected ? cs.onPrimary : cs.onSurfaceVariant,
             fontWeight: FontWeight.w700,
             fontSize: 13,

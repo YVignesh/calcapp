@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -82,14 +83,14 @@ class _ApyScreenState extends State<ApyScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
-              color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+              color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
               borderRadius: BorderRadius.circular(14),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 value: _compounds,
                 isExpanded: true,
-                style: GoogleFonts.nunito(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
+                style: GoogleFonts.ibmPlexSans(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
                 items: _compoundOptions.entries
                     .map((e) => DropdownMenuItem(value: e.value, child: Text(e.key)))
                     .toList(),
@@ -107,7 +108,7 @@ class _ApyScreenState extends State<ApyScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_apy != null) ...[
             const SizedBox(height: 24),
@@ -130,14 +131,14 @@ class _ApyScreenState extends State<ApyScreen> {
   Widget _comparisonCard() {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Simple vs Compound (1 year)', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurfaceVariant, letterSpacing: 0.3)),
+          Text('Simple vs Compound (1 year)', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13, color: cs.onSurfaceVariant, letterSpacing: 0.3)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -159,7 +160,7 @@ class _ApyScreenState extends State<ApyScreen> {
                   const Icon(Icons.trending_up_rounded, size: 16, color: Color(0xFF10B981)),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(_bonus!, style: GoogleFonts.nunito(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF10B981))),
+                    child: Text(_bonus!, style: GoogleFonts.ibmPlexSans(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF10B981))),
                   ),
                 ],
               ),
@@ -182,9 +183,9 @@ class _ApyScreenState extends State<ApyScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: GoogleFonts.nunito(fontSize: 11, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
+          Text(label, style: GoogleFonts.ibmPlexSans(fontSize: 11, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant)),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
+          Text(value, style: GoogleFonts.ibmPlexSans(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
         ],
       ),
     );

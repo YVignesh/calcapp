@@ -84,7 +84,7 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_months != null) ...[
             const SizedBox(height: 24),

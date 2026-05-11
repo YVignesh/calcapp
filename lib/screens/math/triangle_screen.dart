@@ -144,12 +144,12 @@ class _TriangleScreenState extends State<TriangleScreen> {
           if (_error != null)
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Text(_error!, style: GoogleFonts.nunito(color: cs.error, fontWeight: FontWeight.w600, fontSize: 13)),
+              child: Text(_error!, style: GoogleFonts.ibmPlexSans(color: cs.error, fontWeight: FontWeight.w600, fontSize: 13)),
             ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Solve Triangle', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Solve Triangle', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_results != null) ...[
             const SizedBox(height: 24),

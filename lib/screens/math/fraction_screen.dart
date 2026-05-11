@@ -86,7 +86,7 @@ class _FractionScreenState extends State<FractionScreen> {
           Wrap(
             spacing: 8,
             children: ['+', '-', '×', '÷'].map((op) => ChoiceChip(
-              label: Text(op, style: GoogleFonts.nunito(fontSize: 18, fontWeight: FontWeight.w700)),
+              label: Text(op, style: GoogleFonts.ibmPlexSans(fontSize: 18, fontWeight: FontWeight.w700)),
               selected: _op == op,
               onSelected: (_) => setState(() => _op = op),
             )).toList(),
@@ -97,7 +97,7 @@ class _FractionScreenState extends State<FractionScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_fraction != null) ...[
             const SizedBox(height: 24),
@@ -128,7 +128,7 @@ class _FractionScreenState extends State<FractionScreen> {
         )),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text('/', style: GoogleFonts.nunito(
+          child: Text('/', style: GoogleFonts.ibmPlexSans(
             fontSize: 28, fontWeight: FontWeight.w800, color: cs.primary)),
         ),
         Expanded(child: TextField(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/tokens.dart';
+
 const durationUnits = ['Days', 'Months', 'Years'];
 
 /// Converts a raw amount + unit to a number of years (e.g. 18 "Months" -> 1.5).
 double? durationToYears(String raw, String unit) {
   final v = double.tryParse(raw.trim().replaceAll(',', ''));
-  if (v == null) return null;
+  if (v == null) { return null; }
   switch (unit) {
     case 'Days':
       return v / 365.0;
@@ -37,7 +39,8 @@ class DurationField extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
 
     return Row(
       children: [
@@ -45,7 +48,8 @@ class DurationField extends StatelessWidget {
           flex: 3,
           child: TextField(
             controller: controller,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            keyboardType:
+                const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(hintText: hint ?? 'Time period'),
           ),
         ),
@@ -53,24 +57,26 @@ class DurationField extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppTokens.rInput),
+              border: Border.all(color: borderColor),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: unit,
                 isExpanded: true,
-                style: GoogleFonts.nunito(
-                    color: cs.onSurface,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15),
+                style: GoogleFonts.ibmPlexSans(
+                  color: cs.onSurface,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                ),
                 items: durationUnits
                     .map((u) => DropdownMenuItem(value: u, child: Text(u)))
                     .toList(),
                 onChanged: (v) {
-                  if (v != null) onUnitChanged(v);
+                  if (v != null) { onUnitChanged(v); }
                 },
               ),
             ),

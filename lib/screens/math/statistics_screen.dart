@@ -122,12 +122,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (_error != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text(_error!, style: GoogleFonts.nunito(color: cs.error, fontWeight: FontWeight.w600, fontSize: 13)),
+              child: Text(_error!, style: GoogleFonts.ibmPlexSans(color: cs.error, fontWeight: FontWeight.w600, fontSize: 13)),
             ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_results != null) ...[
             const SizedBox(height: 24),

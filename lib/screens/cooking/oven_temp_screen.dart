@@ -102,7 +102,7 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_celsius != null) ...[
             const SizedBox(height: 24),
@@ -155,12 +155,12 @@ class _OvenTempScreenState extends State<OvenTempScreen> {
                     child: Row(
                       children: [
                         Expanded(child: Text(r.$1,
-                            style: GoogleFonts.nunito(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant))),
-                        Text(r.$2, style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 13)),
+                            style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 13, color: cs.onSurfaceVariant))),
+                        Text(r.$2, style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13)),
                         const SizedBox(width: 12),
-                        Text(r.$3, style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 13)),
+                        Text(r.$3, style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 13)),
                         const SizedBox(width: 12),
-                        Text('GM ${r.$4}', style: GoogleFonts.nunito(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
+                        Text('GM ${r.$4}', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 12, color: cs.onSurfaceVariant)),
                       ],
                     ),
                   ),

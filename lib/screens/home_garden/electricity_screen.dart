@@ -115,12 +115,12 @@ class _ElectricityScreenState extends State<ElectricityScreen> {
               quantity: TextEditingController(text: '1'),
             ))),
             icon: const Icon(Icons.add_rounded),
-            label: Text('Add appliance', style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+            label: Text('Add appliance', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_daily != null) ...[
             const SizedBox(height: 24),

@@ -2,7 +2,7 @@
 
 Cross-platform Flutter calculator suite (Android · iOS · web), 56+ tools across 7 categories — "one app for every calculation."
 
-**Goal:** a polished, fast, monetizable app (ads + Pro tier) with best-in-class mobile-first UX.
+**Goal:** a polished, fast (web+mobile) app
 
 **Stack:** Flutter / Material 3, go_router, provider, math_expressions, fl_chart, google_fonts (Nunito), intl, http, shared_preferences.
 

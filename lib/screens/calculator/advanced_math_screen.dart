@@ -288,7 +288,7 @@ class _AdvancedMathScreenState extends State<AdvancedMathScreen> {
                     borderRadius: BorderRadius.circular(11),
                   ),
                   child: Text(labels[i],
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.ibmPlexSans(
                           fontWeight: FontWeight.w700,
                           fontSize: 13.5,
                           color: _tab == i ? cs.onPrimary : cs.onSurfaceVariant)),
@@ -319,18 +319,10 @@ class _AdvancedMathScreenState extends State<AdvancedMathScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Text(e,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.ibmPlexSans(
               color: Theme.of(context).colorScheme.error,
               fontSize: 13.5,
               fontWeight: FontWeight.w700)),
-    );
-  }
-
-  Widget _goButton(VoidCallback onTap, String label) {
-    return ElevatedButton(
-      onPressed: onTap,
-      child: Text(label,
-          style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
     );
   }
 
@@ -351,8 +343,6 @@ class _AdvancedMathScreenState extends State<AdvancedMathScreen> {
         _numField(_derivAt, 'EVALUATE DERIVATIVE AT  x =', 'e.g. 2'),
         const SizedBox(height: 16),
         MathKeypad(controller: _derivExpr, onSubmit: _calcDerivative, submitLabel: 'GO'),
-        const SizedBox(height: 8),
-        _goButton(_calcDerivative, "Calculate  f '(x)"),
         _errorText(_derivError),
         if (_derivResult != null) ...[
           const SizedBox(height: 20),
@@ -408,8 +398,6 @@ class _AdvancedMathScreenState extends State<AdvancedMathScreen> {
         ),
         const SizedBox(height: 16),
         MathKeypad(controller: _integExpr, onSubmit: _calcIntegral, submitLabel: 'GO'),
-        const SizedBox(height: 8),
-        _goButton(_calcIntegral, 'Calculate  ∫ f(x) dx'),
         _errorText(_integError),
         if (_integResult != null) ...[
           const SizedBox(height: 20),
@@ -459,8 +447,6 @@ class _AdvancedMathScreenState extends State<AdvancedMathScreen> {
         _numField(_limitAt, 'AS  x  APPROACHES', 'e.g. 0'),
         const SizedBox(height: 16),
         MathKeypad(controller: _limitExpr, onSubmit: _calcLimit, submitLabel: 'GO'),
-        const SizedBox(height: 8),
-        _goButton(_calcLimit, 'Calculate Limit'),
         _errorText(_limitError),
         if (_limitResult != null) ...[
           const SizedBox(height: 20),

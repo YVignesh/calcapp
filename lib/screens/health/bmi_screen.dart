@@ -95,7 +95,7 @@ class _BmiScreenState extends State<BmiScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate BMI',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+                style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_bmi != null) ...[
             const SizedBox(height: 24),
@@ -139,13 +139,13 @@ class _BmiScreenState extends State<BmiScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(c.$1,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.ibmPlexSans(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color: cs.onSurface)),
                   const Spacer(),
                   Text(c.$2,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.ibmPlexSans(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color: cs.onSurfaceVariant)),
@@ -169,7 +169,7 @@ class _BmiScreenState extends State<BmiScreen> {
           borderRadius: BorderRadius.circular(14),
         ),
         child: Text(label,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
               color: selected ? cs.onPrimary : cs.onSurfaceVariant,
               fontWeight: FontWeight.w700,
               fontSize: 13,

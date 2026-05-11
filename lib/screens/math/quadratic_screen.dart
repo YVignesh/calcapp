@@ -95,7 +95,7 @@ class _QuadraticScreenState extends State<QuadraticScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Solve', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Solve', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_x1 != null) ...[
             const SizedBox(height: 24),
@@ -124,7 +124,7 @@ class _QuadraticScreenState extends State<QuadraticScreen> {
       children: [
         Text(
           '$label${required ? ' *' : ''}',
-          style: GoogleFonts.nunito(fontSize: 12, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant),
+          style: GoogleFonts.ibmPlexSans(fontSize: 12, fontWeight: FontWeight.w700, color: cs.onSurfaceVariant),
         ),
         const SizedBox(height: 4),
         TextField(

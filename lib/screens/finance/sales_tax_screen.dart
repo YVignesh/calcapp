@@ -78,7 +78,7 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
               Expanded(
                 child: Text(
                   _priceIncludes ? 'Price already includes tax' : 'Price does not include tax',
-                  style: GoogleFonts.nunito(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface),
+                  style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 14, color: cs.onSurface),
                 ),
               ),
             ],
@@ -86,7 +86,7 @@ class _SalesTaxScreenState extends State<SalesTaxScreen> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_taxAmount != null) ...[
             const SizedBox(height: 24),

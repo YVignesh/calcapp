@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/result_card.dart';
 
@@ -64,14 +65,14 @@ class _BaseConverterScreenState extends State<BaseConverterScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
-              color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+              color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
               borderRadius: BorderRadius.circular(14),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _fromBase,
                 isExpanded: true,
-                style: GoogleFonts.nunito(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
+                style: GoogleFonts.ibmPlexSans(color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
                 items: _bases.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
                 onChanged: (v) => setState(() {
                   _fromBase = v!;
@@ -102,7 +103,7 @@ class _BaseConverterScreenState extends State<BaseConverterScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Convert', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Convert', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_decimal != null) ...[
             const SizedBox(height: 24),

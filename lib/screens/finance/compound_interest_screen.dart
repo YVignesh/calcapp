@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/tokens.dart';
 import '../../widgets/calc_scaffold.dart';
 import '../../widgets/duration_field.dart';
 import '../../widgets/function_graph.dart';
@@ -162,7 +163,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
           ElevatedButton(
             onPressed: _calculate,
             child: Text('Calculate',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_result != null) ...[
@@ -204,7 +205,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
   Widget _insightRow() {
     final cs = Theme.of(context).colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bg = isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E);
+    final bg = isLight ? AppTokens.lBg2 : AppTokens.bg2;
 
     insightTile(String label, String value, Color valueColor) => Expanded(
           child: Container(
@@ -217,14 +218,14 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: cs.onSurfaceVariant,
                         letterSpacing: 0.3)),
                 const SizedBox(height: 4),
                 Text(value,
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: valueColor)),
@@ -267,7 +268,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+            color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
@@ -316,7 +317,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
   Widget _th(String text, {required int flex}) => Expanded(
         flex: flex,
         child: Text(text,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -327,7 +328,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
       Expanded(
         flex: flex,
         child: Text(text,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.ibmPlexSans(
                 fontSize: 12,
                 fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
                 color: color ?? Theme.of(context).colorScheme.onSurface)),
@@ -343,7 +344,7 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Breakdown copied as CSV',
-            style: GoogleFonts.nunito(fontWeight: FontWeight.w600)),
+            style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600)),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -368,14 +369,14 @@ class _CompoundInterestScreenState extends State<CompoundInterestScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xFFEEEEF5) : const Color(0xFF2C2C2E),
+        color: isLight ? AppTokens.lBg2 : AppTokens.bg2,
         borderRadius: BorderRadius.circular(14),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<int>(
           value: _compounds,
           isExpanded: true,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.ibmPlexSans(
             color: cs.onSurface,
             fontWeight: FontWeight.w600,
             fontSize: 15,

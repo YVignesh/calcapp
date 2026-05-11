@@ -78,7 +78,7 @@ class _CagrScreenState extends State<CagrScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _calculate,
-            child: Text('Calculate', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 16)),
+            child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
           if (_cagr != null) ...[
             const SizedBox(height: 24),
@@ -101,7 +101,7 @@ class _CagrScreenState extends State<CagrScreen> {
                 backgroundColor: cs.secondaryContainer,
                 foregroundColor: cs.onSecondaryContainer,
               ),
-              child: Text('Calculate Required End Value', style: GoogleFonts.nunito(fontWeight: FontWeight.w700, fontSize: 14)),
+              child: Text('Calculate Required End Value', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 14)),
             ),
             if (_requiredEndValue != null) ...[
               const SizedBox(height: 12),

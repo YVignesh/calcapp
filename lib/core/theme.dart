@@ -1,146 +1,142 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'tokens.dart';
 
+/// Console design-system theme.
+///
+/// Typography: IBM Plex Sans (UI / body) — loaded via google_fonts.
+/// Numeric accent: IBM Plex Mono — applied in widgets that render numbers.
+/// Palette: single brand accent (Signal Cyan). Near-monochrome chrome.
 class AppTheme {
-  static const _primaryLight = Color(0xFF5E5CE6);
-  static const _primaryDark = Color(0xFF7B79FF);
-  static const _secondaryLight = Color(0xFFFF6B6B);
-  static const _secondaryDark = Color(0xFFFF8080);
+  static ThemeData light() => _buildTheme(_lightCs());
+  static ThemeData dark() => _buildTheme(_darkCs());
 
-  static ThemeData light() {
-    final cs = ColorScheme(
-      brightness: Brightness.light,
-      primary: _primaryLight,
-      onPrimary: Colors.white,
-      primaryContainer: const Color(0xFFEEEDFF),
-      onPrimaryContainer: const Color(0xFF1A1870),
-      secondary: _secondaryLight,
-      onSecondary: Colors.white,
-      secondaryContainer: const Color(0xFFFFE4E4),
-      onSecondaryContainer: const Color(0xFF5C1212),
-      surface: const Color(0xFFFFFFFF),
-      onSurface: const Color(0xFF1C1C1E),
-      surfaceContainerHighest: const Color(0xFFF5F5F7),
-      onSurfaceVariant: const Color(0xFF636366),
-      error: const Color(0xFFFF3B30),
-      onError: Colors.white,
-      outline: const Color(0xFFD1D1D6),
-      outlineVariant: const Color(0xFFE5E5EA),
-      shadow: Colors.black,
-      scrim: Colors.black,
-      inverseSurface: const Color(0xFF1C1C1E),
-      onInverseSurface: const Color(0xFFF2F2F7),
-      inversePrimary: _primaryDark,
-    );
+  static ColorScheme _lightCs() => ColorScheme(
+        brightness: Brightness.light,
+        primary: AppTokens.brandAccent,
+        onPrimary: AppTokens.lTextHi,
+        primaryContainer: const Color(0xFFCFF9FE),
+        onPrimaryContainer: const Color(0xFF082F36),
+        secondary: AppTokens.success,
+        onSecondary: AppTokens.lTextHi,
+        secondaryContainer: const Color(0xFFCFFAED),
+        onSecondaryContainer: const Color(0xFF052E1F),
+        surface: AppTokens.lBg1,
+        onSurface: AppTokens.lTextHi,
+        surfaceContainerHighest: AppTokens.lBg2,
+        onSurfaceVariant: AppTokens.lTextMd,
+        error: AppTokens.danger,
+        onError: Colors.white,
+        outline: AppTokens.lBorder,
+        outlineVariant: AppTokens.lBorder,
+        shadow: Colors.black,
+        scrim: Colors.black,
+        inverseSurface: AppTokens.bg1,
+        onInverseSurface: AppTokens.textHi,
+        inversePrimary: AppTokens.brandAccent,
+      );
 
-    return _buildTheme(cs);
-  }
-
-  static ThemeData dark() {
-    final cs = ColorScheme(
-      brightness: Brightness.dark,
-      primary: _primaryDark,
-      onPrimary: const Color(0xFF1E1B4B),
-      primaryContainer: const Color(0xFF2D2B7A),
-      onPrimaryContainer: const Color(0xFFCCCBFF),
-      secondary: _secondaryDark,
-      onSecondary: const Color(0xFF5C1212),
-      secondaryContainer: const Color(0xFF5C2020),
-      onSecondaryContainer: const Color(0xFFFFCDCD),
-      surface: const Color(0xFF1C1C1E),
-      onSurface: const Color(0xFFF2F2F7),
-      surfaceContainerHighest: const Color(0xFF2C2C2E),
-      onSurfaceVariant: const Color(0xFF8E8E93),
-      error: const Color(0xFFFF453A),
-      onError: Colors.white,
-      outline: const Color(0xFF48484A),
-      outlineVariant: const Color(0xFF3A3A3C),
-      shadow: Colors.black,
-      scrim: Colors.black,
-      inverseSurface: const Color(0xFFF2F2F7),
-      onInverseSurface: const Color(0xFF1C1C1E),
-      inversePrimary: _primaryLight,
-    );
-
-    return _buildTheme(cs);
-  }
+  static ColorScheme _darkCs() => ColorScheme(
+        brightness: Brightness.dark,
+        primary: AppTokens.brandAccent,
+        onPrimary: AppTokens.bg0,
+        primaryContainer: const Color(0xFF0E3A43),
+        onPrimaryContainer: const Color(0xFF9FECFB),
+        secondary: AppTokens.success,
+        onSecondary: AppTokens.bg0,
+        secondaryContainer: const Color(0xFF0E3A2B),
+        onSecondaryContainer: const Color(0xFF9AFAD8),
+        surface: AppTokens.bg1,
+        onSurface: AppTokens.textHi,
+        surfaceContainerHighest: AppTokens.bg2,
+        onSurfaceVariant: AppTokens.textMd,
+        error: AppTokens.danger,
+        onError: Colors.white,
+        outline: AppTokens.border,
+        outlineVariant: AppTokens.border,
+        shadow: Colors.black,
+        scrim: Colors.black,
+        inverseSurface: AppTokens.lBg1,
+        onInverseSurface: AppTokens.lTextHi,
+        inversePrimary: AppTokens.brandAccent,
+      );
 
   static ThemeData _buildTheme(ColorScheme cs) {
     final isLight = cs.brightness == Brightness.light;
-    final textTheme = GoogleFonts.nunitoTextTheme(
+    final bgColor = isLight ? AppTokens.lBg0 : AppTokens.bg0;
+    final surfaceColor = isLight ? AppTokens.lBg1 : AppTokens.bg1;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+    final inputFill = isLight ? AppTokens.lBg2 : AppTokens.bg2;
+
+    // IBM Plex Sans for UI text
+    final textTheme = GoogleFonts.ibmPlexSansTextTheme(
       isLight ? ThemeData.light().textTheme : ThemeData.dark().textTheme,
+    ).apply(
+      bodyColor: cs.onSurface,
+      displayColor: cs.onSurface,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: cs,
       textTheme: textTheme,
-      scaffoldBackgroundColor: isLight
-          ? const Color(0xFFF5F5F7)
-          : const Color(0xFF0F0F14),
+      scaffoldBackgroundColor: bgColor,
+      cardColor: surfaceColor,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
-        systemOverlayStyle: isLight
-            ? SystemUiOverlayStyle.dark
-            : SystemUiOverlayStyle.light,
-        titleTextStyle: GoogleFonts.nunito(
+        centerTitle: false,
+        systemOverlayStyle:
+            isLight ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
+        titleTextStyle: GoogleFonts.ibmPlexSans(
           color: cs.onSurface,
-          fontSize: 18,
+          fontSize: 17,
           fontWeight: FontWeight.w700,
-          letterSpacing: -0.3,
+          letterSpacing: -0.2,
         ),
         iconTheme: IconThemeData(color: cs.onSurface),
       ),
       cardTheme: CardThemeData(
-        color: cs.surface,
+        color: surfaceColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: isLight
-                ? const Color(0xFFE5E5EA)
-                : const Color(0xFF3A3A3C),
-            width: 1,
-          ),
+          borderRadius: BorderRadius.circular(AppTokens.rCard),
+          side: BorderSide(color: borderColor),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isLight
-            ? const Color(0xFFEEEEF5)
-            : const Color(0xFF2C2C2E),
+        fillColor: inputFill,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
+          borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
           borderSide: BorderSide(color: cs.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: cs.error, width: 1.5),
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
+          borderSide: BorderSide(color: cs.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
           borderSide: BorderSide(color: cs.error, width: 2),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        labelStyle: GoogleFonts.nunito(
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        labelStyle: GoogleFonts.ibmPlexSans(
           color: cs.onSurfaceVariant,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
-        hintStyle: GoogleFonts.nunito(
+        hintStyle: GoogleFonts.ibmPlexSans(
           color: cs.onSurfaceVariant.withValues(alpha: 0.6),
         ),
       ),
@@ -150,45 +146,90 @@ class AppTheme {
           foregroundColor: cs.onPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppTokens.rInput),
           ),
-          textStyle: GoogleFonts.nunito(
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            letterSpacing: -0.2,
+          textStyle: GoogleFonts.ibmPlexSans(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            letterSpacing: 0.1,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          minimumSize: const Size(double.infinity, 54),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          minimumSize: const Size(double.infinity, 48),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: cs.primary,
+          side: BorderSide(color: cs.primary.withValues(alpha: 0.5)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.rInput),
+          ),
+          textStyle: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: cs.primary,
+          textStyle: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600),
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: isLight
-            ? const Color(0xFFE5E5EA)
-            : const Color(0xFF3A3A3C),
+        color: borderColor,
         thickness: 1,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: isLight
-            ? const Color(0xFFEEEEF5)
-            : const Color(0xFF2C2C2E),
+        backgroundColor: inputFill,
         selectedColor: cs.primaryContainer,
-        labelStyle: GoogleFonts.nunito(fontWeight: FontWeight.w600),
+        labelStyle: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w500),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppTokens.rChip),
+          side: BorderSide(color: borderColor),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: cs.surface,
+        backgroundColor: surfaceColor,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: isLight ? AppTokens.bg2 : AppTokens.bg2,
+        contentTextStyle: GoogleFonts.ibmPlexSans(
+          color: AppTokens.textHi,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: surfaceColor,
+        indicatorColor: cs.primary.withValues(alpha: 0.15),
+        labelTextStyle: WidgetStateProperty.all(
+          GoogleFonts.ibmPlexSans(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: cs.primary,
+        foregroundColor: cs.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.rInput),
+        ),
       ),
     );
   }
+
+  /// Helper: monospace style for numeric display. Use IBM Plex Mono.
+  static TextStyle monoStyle({
+    required double size,
+    FontWeight weight = FontWeight.w600,
+    Color? color,
+  }) =>
+      GoogleFonts.ibmPlexMono(
+        fontSize: size,
+        fontWeight: weight,
+        color: color,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      );
 }

@@ -1,12 +1,13 @@
 {
-    "name": "calc",
-    "short_name": "calc",
+    "name": "CalcApp - All-in-One Calculator Suite",
+    "short_name": "CalcApp",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#0B0B0E",
+    "theme_color": "#0B0B0E",
+    "description": "56+ calculators for finance, scientific math, graphing, conversions, health, cooking, home projects and everyday math.",
+    "orientation": "any",
+    "categories": ["productivity", "utilities", "finance", "education"],
     "prefer_related_applications": false,
     "icons": [
         {

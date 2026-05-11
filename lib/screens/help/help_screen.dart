@@ -27,7 +27,7 @@ class HelpScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsetsDirectional.only(start: 56, bottom: 14, end: 16),
               title: Text('Help & Guide',
-                  style: GoogleFonts.nunito(
+                  style: GoogleFonts.ibmPlexSans(
                       fontWeight: FontWeight.w800, fontSize: 19, color: Colors.white)),
               background: Container(
                 decoration: BoxDecoration(
@@ -58,7 +58,7 @@ class HelpScreen extends StatelessWidget {
                     'CalcApp puts ${_toolCount()} calculators and converters in one place — '
                     'finance, health, unit conversion, cooking, home & garden, everyday math, '
                     'a scientific calculator, a graphing calculator and calculus tools.',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 15, height: 1.5, fontWeight: FontWeight.w500,
                         color: cs.onSurfaceVariant),
                   ),
@@ -79,7 +79,7 @@ class HelpScreen extends StatelessWidget {
                     'is for live currency exchange rates, fetched from the free, key-less '
                     'frankfurter.app API and cached for 30 minutes. Theme preference is stored '
                     'locally on your device.',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 14, height: 1.55, fontWeight: FontWeight.w500,
                         color: cs.onSurfaceVariant),
                   ),
@@ -89,7 +89,7 @@ class HelpScreen extends StatelessWidget {
                       onPressed: () => context.canPop() ? context.pop() : context.go('/'),
                       icon: const Icon(Icons.grid_view_rounded, size: 18),
                       label: Text('Back to calculators',
-                          style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+                          style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700)),
                     ),
                   ),
                 ],
@@ -111,7 +111,7 @@ class HelpScreen extends StatelessWidget {
 
   Widget _heading(BuildContext context, String text) => Text(
         text,
-        style: GoogleFonts.nunito(
+        style: GoogleFonts.ibmPlexSans(
             fontSize: 20,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
@@ -150,12 +150,12 @@ class _CategoryRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${category.name}  ·  ${category.tools.length} tools',
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 15, fontWeight: FontWeight.w800,
                         color: cs.onSurface)),
                 const SizedBox(height: 2),
                 Text(names,
-                    style: GoogleFonts.nunito(
+                    style: GoogleFonts.ibmPlexSans(
                         fontSize: 12.5, height: 1.4, fontWeight: FontWeight.w500,
                         color: cs.onSurfaceVariant)),
               ],
@@ -250,12 +250,12 @@ class _TopicTile extends StatelessWidget {
         child: ExpansionTile(
           leading: Icon(topic.icon, color: cs.primary),
           title: Text(topic.title,
-              style: GoogleFonts.nunito(fontWeight: FontWeight.w800, fontSize: 15)),
+              style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w800, fontSize: 15)),
           childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(topic.body,
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.ibmPlexSans(
                     fontSize: 14, height: 1.55, fontWeight: FontWeight.w500,
                     color: cs.onSurfaceVariant)),
           ],
