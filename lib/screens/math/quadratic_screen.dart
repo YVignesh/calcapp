@@ -23,12 +23,28 @@ class _QuadraticScreenState extends State<QuadraticScreen> {
   String? _axis;
   String? _natureLabel;
   Color? _natureColor;
+  String? _error;
 
   void _calculate() {
-    final a = double.tryParse(_a.text);
-    final b = double.tryParse(_b.text) ?? 0;
-    final c = double.tryParse(_c.text) ?? 0;
-    if (a == null || a == 0) return;
+    final a = double.tryParse(_a.text.trim());
+    final b = double.tryParse(_b.text.trim()) ?? 0;
+    final c = double.tryParse(_c.text.trim()) ?? 0;
+    if (a == null) {
+      setState(() {
+        _error = _a.text.trim().isEmpty
+            ? 'Enter coefficient a.'
+            : 'Coefficient a must be a valid number.';
+        _x1 = null;
+      });
+      return;
+    }
+    if (a == 0) {
+      setState(() {
+        _error = 'Coefficient a must be non-zero — with a = 0 the equation is linear, not quadratic.';
+        _x1 = null;
+      });
+      return;
+    }
 
     final disc = b * b - 4 * a * c;
     final vx = -b / (2 * a);
@@ -57,6 +73,7 @@ class _QuadraticScreenState extends State<QuadraticScreen> {
     }
 
     setState(() {
+      _error = null;
       _x1 = x1;
       _x2 = x2;
       _discriminant = _fmt(disc);
@@ -97,6 +114,17 @@ class _QuadraticScreenState extends State<QuadraticScreen> {
             onPressed: _calculate,
             child: Text('Solve', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              style: GoogleFonts.ibmPlexSans(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
           if (_x1 != null) ...[
             const SizedBox(height: 24),
             ResultCard(

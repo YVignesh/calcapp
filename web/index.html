@@ -19,6 +19,33 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <script>
+    // Keep the page pinch-zoomable (WCAG 2.1 SC 1.4.4). Flutter's web engine
+    // injects its own `flt-viewport` <meta> with `user-scalable=no, maximum-scale=1.0`
+    // on init; this watches for that and rewrites it back to a zoomable value.
+    // (The graphing calculator has on-screen +/- zoom, so it doesn't depend on
+    // browser pinch gestures.)
+    (function () {
+      var WANT = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
+      function fixViewport() {
+        var metas = document.querySelectorAll('meta[name="viewport"]');
+        for (var i = 0; i < metas.length; i++) {
+          var c = metas[i].getAttribute('content') || '';
+          if (c.indexOf('user-scalable=no') !== -1 || c.indexOf('maximum-scale') !== -1) {
+            metas[i].setAttribute('content', WANT);
+          }
+        }
+      }
+      fixViewport();
+      if (typeof MutationObserver !== 'undefined') {
+        new MutationObserver(fixViewport).observe(document.head, {
+          childList: true, subtree: true, attributes: true,
+        });
+      }
+      document.addEventListener('DOMContentLoaded', fixViewport);
+      window.addEventListener('load', fixViewport);
+    })();
+  </script>
   <meta name="description" content="Calc Studio is an all-in-one calculator suite with finance, scientific, graphing, unit conversion, health, cooking, home and everyday math tools for web and mobile.">
   <meta name="theme-color" content="#0B0B0E">
   <meta name="color-scheme" content="light dark">
@@ -190,7 +217,15 @@
     }
   </script>
   <style>
+    /* The crawlable content block. Positioned out of normal flow so it can't
+       cause layout shift (CLS) when Flutter mounts its canvas over it; it stays
+       rendered in the DOM for search engines. The loading overlay sits on top. */
     .seo-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 0;
       max-width: 980px;
       margin: 0 auto;
       padding: 24px;
@@ -216,10 +251,57 @@
       color: #2563eb;
       font-weight: 600;
     }
+    /* Loading overlay shown until Flutter's view mounts (CanvasKit cold-load
+       can take several seconds — give the user something instead of a blank page). */
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0B0B0E;
+      z-index: 10;
+    }
+    #app-loading .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255, 255, 255, 0.16);
+      border-top-color: #22D3EE;
+      border-radius: 50%;
+      animation: app-spin 0.8s linear infinite;
+    }
+    @keyframes app-spin { to { transform: rotate(360deg); } }
+    @media (prefers-color-scheme: light) {
+      #app-loading { background: #FAFAFB; }
+      #app-loading .spinner {
+        border-color: rgba(0, 0, 0, 0.12);
+        border-top-color: #22D3EE;
+      }
+    }
   </style>
 </head>
 <body>
   <noscript>Calc Studio needs JavaScript to run its calculators.</noscript>
+  <div id="app-loading"><div class="spinner" role="status" aria-label="Loading Calc Studio"></div></div>
+  <script>
+    // Remove the loading overlay once Flutter's view element appears in the DOM.
+    (function () {
+      function removeLoader() {
+        var el = document.getElementById('app-loading');
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }
+      var FLUTTER_SEL = 'flutter-view, flt-glass-pane, flt-scene-host, flt-semantics-placeholder';
+      if (document.querySelector(FLUTTER_SEL)) { removeLoader(); return; }
+      if (typeof MutationObserver !== 'undefined') {
+        var obs = new MutationObserver(function () {
+          if (document.querySelector(FLUTTER_SEL)) { removeLoader(); obs.disconnect(); }
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+      // Safety net: never leave the overlay up forever.
+      setTimeout(removeLoader, 20000);
+    })();
+  </script>
   <main class="seo-content" aria-label="Calc Studio calculator overview">
     <h1 id="seo-title">Calc Studio - Free Online Calculators for Math, Finance, Units and Health</h1>
     <p id="seo-summary">

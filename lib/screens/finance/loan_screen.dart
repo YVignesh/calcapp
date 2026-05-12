@@ -52,7 +52,6 @@ class _LoanScreenState extends State<LoanScreen> {
   bool _showFull = false;
 
   final _fmt = NumberFormat('#,##0.00');
-  final _ifmt = NumberFormat('#,##0');
 
   void _calculate() {
     final valid = FormValidator.run(context, [
@@ -455,18 +454,18 @@ class _LoanScreenState extends State<LoanScreen> {
                   child: Row(
                     children: [
                       _td('${row.month}', flex: 1, bold: true),
-                      _td('\$${_ifmt.format(row.payment)}', flex: 3),
+                      _td('\$${_fmt.format(row.payment)}', flex: 3),
                       _td(
-                        '\$${_ifmt.format(row.principal)}',
+                        '\$${_fmt.format(row.principal)}',
                         flex: 3,
                         color: const Color(0xFF10B981),
                       ),
                       _td(
-                        '\$${_ifmt.format(row.interest)}',
+                        '\$${_fmt.format(row.interest)}',
                         flex: 3,
                         color: Colors.redAccent,
                       ),
-                      _td('\$${_ifmt.format(row.balance)}', flex: 3),
+                      _td('\$${_fmt.format(row.balance)}', flex: 3),
                     ],
                   ),
                 );
@@ -510,6 +509,8 @@ class _LoanScreenState extends State<LoanScreen> {
     flex: flex,
     child: Text(
       text,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: GoogleFonts.ibmPlexSans(
         fontSize: 11,
         fontWeight: bold ? FontWeight.w800 : FontWeight.w600,

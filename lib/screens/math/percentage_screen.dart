@@ -17,6 +17,7 @@ class _PercentageScreenState extends State<PercentageScreen> {
   final _b = TextEditingController();
   String? _result;
   String? _resultLabel;
+  String? _error;
 
   // Mode 0: What is X% of Y?
   // Mode 1: X is what % of Y?
@@ -30,35 +31,58 @@ class _PercentageScreenState extends State<PercentageScreen> {
     'Increase / Decrease',
   ];
 
+  void _fail(String message) {
+    setState(() {
+      _error = message;
+      _result = null;
+      _resultLabel = null;
+    });
+  }
+
   void _calculate() {
-    final a = double.tryParse(_a.text);
-    final b = double.tryParse(_b.text);
-    if (a == null || b == null) return;
+    final a = double.tryParse(_a.text.trim());
+    final b = double.tryParse(_b.text.trim());
+    if (a == null || b == null) {
+      _fail(_a.text.trim().isEmpty || _b.text.trim().isEmpty
+          ? 'Enter a number in both fields.'
+          : 'Both fields must be valid numbers.');
+      return;
+    }
 
     switch (_mode) {
       case 0:
         final r = a / 100 * b;
         setState(() {
+          _error = null;
           _resultLabel = '$a% of $b';
           _result = _fmt(r);
         });
       case 1:
-        if (b == 0) return;
+        if (b == 0) {
+          _fail('The total (Y) cannot be zero.');
+          return;
+        }
         final r = a / b * 100;
         setState(() {
+          _error = null;
           _resultLabel = '$a is ___% of $b';
           _result = '${_fmt(r)}%';
         });
       case 2:
-        if (a == 0) return;
+        if (a == 0) {
+          _fail('The original value (X) cannot be zero — percentage change from zero is undefined.');
+          return;
+        }
         final r = (b - a) / a * 100;
         setState(() {
+          _error = null;
           _resultLabel = r >= 0 ? 'Increase' : 'Decrease';
           _result = '${r >= 0 ? '+' : ''}${_fmt(r)}%';
         });
       case 3:
         final r = a * (1 + b / 100);
         setState(() {
+          _error = null;
           _resultLabel = b >= 0 ? '$a increased by $b%' : '$a decreased by ${b.abs()}%';
           _result = _fmt(r);
         });
@@ -95,6 +119,7 @@ class _PercentageScreenState extends State<PercentageScreen> {
               onSelected: (_) => setState(() {
                 _mode = i;
                 _result = null;
+                _error = null;
               }),
             )),
           ),
@@ -117,6 +142,17 @@ class _PercentageScreenState extends State<PercentageScreen> {
             onPressed: _calculate,
             child: Text('Calculate', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w700, fontSize: 16)),
           ),
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              style: GoogleFonts.ibmPlexSans(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
           if (_result != null) ...[
             const SizedBox(height: 24),
             ResultCard(

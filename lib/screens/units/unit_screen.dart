@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/tokens.dart';
@@ -15,7 +16,7 @@ class UnitScreen extends StatefulWidget {
 
 class _UnitScreenState extends State<UnitScreen> {
   final _inputCtrl = TextEditingController();
-  late UnitTypeDef _typeDef;
+  UnitTypeDef? _typeDef;
   late UnitDef _from;
   late UnitDef _to;
   String _result = '';
@@ -23,12 +24,17 @@ class _UnitScreenState extends State<UnitScreen> {
   @override
   void initState() {
     super.initState();
-    _typeDef = unitTypes[widget.unitType]!;
-    _from = _typeDef.units[0];
-    _to = _typeDef.units[1];
+    final def = unitTypes[widget.unitType];
+    _typeDef = def;
+    if (def != null) {
+      _from = def.units[0];
+      _to = def.units[1];
+    }
   }
 
   void _convert() {
+    final typeDef = _typeDef;
+    if (typeDef == null) return;
     final value = double.tryParse(_inputCtrl.text);
     if (value == null) {
       setState(() => _result = '');
@@ -38,8 +44,8 @@ class _UnitScreenState extends State<UnitScreen> {
       value,
       _from,
       _to,
-      _typeDef.isTemperature,
-      _typeDef.isFuel,
+      typeDef.isTemperature,
+      typeDef.isFuel,
     );
     String formatted;
     if (result.abs() >= 1e9 || (result.abs() < 1e-4 && result != 0)) {
@@ -66,14 +72,52 @@ class _UnitScreenState extends State<UnitScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final typeDef = _typeDef;
+
+    if (typeDef == null) {
+      return CalcScaffold(
+        title: 'Unit Converter',
+        description: 'There is no converter for "${widget.unitType}".',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pick one of the supported unit types instead:',
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 14,
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final entry in unitTypes.entries)
+                  OutlinedButton(
+                    onPressed: () => context.go('/units/${entry.key}'),
+                    child: Text(entry.value.name),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Back to home'),
+            ),
+          ],
+        ),
+      );
+    }
 
     return CalcScaffold(
-      title: _typeDef.name,
+      title: typeDef.name,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionLabel('FROM'),
-          _unitDropdown(_from, (v) {
+          _unitDropdown(typeDef, _from, (v) {
             setState(() => _from = v!);
             _convert();
           }),
@@ -109,7 +153,7 @@ class _UnitScreenState extends State<UnitScreen> {
           ),
           const SizedBox(height: 12),
           const SectionLabel('TO'),
-          _unitDropdown(_to, (v) {
+          _unitDropdown(typeDef, _to, (v) {
             setState(() => _to = v!);
             _convert();
           }),
@@ -175,13 +219,14 @@ class _UnitScreenState extends State<UnitScreen> {
 
           const SizedBox(height: 28),
           const SectionLabel('ALL UNITS'),
-          ..._buildAllConversions(),
+          ..._buildAllConversions(typeDef),
         ],
       ),
     );
   }
 
-  Widget _unitDropdown(UnitDef selected, ValueChanged<UnitDef?> onChanged) {
+  Widget _unitDropdown(
+      UnitTypeDef typeDef, UnitDef selected, ValueChanged<UnitDef?> onChanged) {
     final cs = Theme.of(context).colorScheme;
     final bgColor = Theme.of(context).brightness == Brightness.light
         ? AppTokens.lBg2
@@ -198,7 +243,7 @@ class _UnitScreenState extends State<UnitScreen> {
           isExpanded: true,
           style: GoogleFonts.ibmPlexSans(
               color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15),
-          items: _typeDef.units
+          items: typeDef.units
               .map((u) => DropdownMenuItem(
                     value: u,
                     child: Text('${u.name} (${u.symbol})'),
@@ -210,12 +255,12 @@ class _UnitScreenState extends State<UnitScreen> {
     );
   }
 
-  List<Widget> _buildAllConversions() {
+  List<Widget> _buildAllConversions(UnitTypeDef typeDef) {
     final value = double.tryParse(_inputCtrl.text);
     if (value == null || _result.isEmpty) return [];
     final cs = Theme.of(context).colorScheme;
-    return _typeDef.units.map((u) {
-      final r = convertUnits(value, _from, u, _typeDef.isTemperature, _typeDef.isFuel);
+    return typeDef.units.map((u) {
+      final r = convertUnits(value, _from, u, typeDef.isTemperature, typeDef.isFuel);
       String formatted;
       if (r.abs() >= 1e9 || (r.abs() < 1e-5 && r != 0)) {
         formatted = r.toStringAsExponential(4);

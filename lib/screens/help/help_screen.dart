@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/tokens.dart';
 import '../../data/tools.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -10,119 +11,112 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final bgColor = isLight ? AppTokens.lBg0 : AppTokens.bg0;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 132,
-            backgroundColor: cs.primary,
-            foregroundColor: Colors.white,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-              color: Colors.white,
-              onPressed: () =>
-                  context.canPop() ? context.pop() : context.go('/'),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsetsDirectional.only(
-                start: 56,
-                bottom: 14,
-                end: 16,
-              ),
-              title: Text(
-                'Help & Guide',
-                style: GoogleFonts.ibmPlexSans(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 19,
-                  color: Colors.white,
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [cs.primary, cs.inversePrimary],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Stack(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Console flat header (matches every other screen).
+            SizedBox(
+              height: 48,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
                   children: [
-                    Positioned(
-                      right: -10,
-                      bottom: -14,
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        size: 128,
-                        color: Colors.white.withValues(alpha: 0.16),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 18,
+                      ),
+                      tooltip: 'Back',
+                      onPressed: () =>
+                          context.canPop() ? context.pop() : context.go('/'),
+                    ),
+                    Text(
+                      'Help & Guide',
+                      style: GoogleFonts.ibmPlexSans(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: cs.onSurface,
+                        letterSpacing: -0.2,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 36),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Calc Studio puts ${_toolCount()} calculators and converters in one place — '
-                    'finance, health, unit conversion, cooking, home & garden, everyday math, '
-                    'a scientific calculator, a graphing calculator and calculus tools.',
-                    style: GoogleFonts.ibmPlexSans(
-                      fontSize: 15,
-                      height: 1.5,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 22),
-                  _heading(context, 'Categories'),
-                  const SizedBox(height: 10),
-                  ...categories.map((c) => _CategoryRow(category: c)),
-                  const SizedBox(height: 24),
-                  _heading(context, 'How to use it'),
-                  const SizedBox(height: 8),
-                  ..._topics.map((t) => _TopicTile(topic: t)),
-                  const SizedBox(height: 24),
-                  _heading(context, 'Privacy & data'),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Every calculation runs on your device — there is no account, no sign-in, '
-                    'and your inputs are never uploaded. The only network request the app makes '
-                    'is for live currency exchange rates, fetched from the free, key-less '
-                    'frankfurter.app API and cached for 30 minutes. Theme preference is stored '
-                    'locally on your device.',
-                    style: GoogleFonts.ibmPlexSans(
-                      fontSize: 14,
-                      height: 1.55,
-                      fontWeight: FontWeight.w500,
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  Center(
-                    child: FilledButton.tonalIcon(
-                      onPressed: () =>
-                          context.canPop() ? context.pop() : context.go('/'),
-                      icon: const Icon(Icons.grid_view_rounded, size: 18),
-                      label: Text(
-                        'Back to calculators',
-                        style: GoogleFonts.ibmPlexSans(
-                          fontWeight: FontWeight.w700,
+            Divider(height: 1, thickness: 1, color: borderColor),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 36),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 720),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Calc Studio puts ${_toolCount()} calculators and converters in one place — '
+                          'finance, health, unit conversion, cooking, home & garden, everyday math, '
+                          'a scientific calculator, a graphing calculator and calculus tools.',
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 15,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            color: cs.onSurfaceVariant,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 22),
+                        _heading(context, 'Categories'),
+                        const SizedBox(height: 10),
+                        ...categories.map((c) => _CategoryRow(category: c)),
+                        const SizedBox(height: 24),
+                        _heading(context, 'How to use it'),
+                        const SizedBox(height: 8),
+                        ..._topics.map((t) => _TopicTile(topic: t)),
+                        const SizedBox(height: 24),
+                        _heading(context, 'Privacy & data'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Every calculation runs on your device — there is no account, no sign-in, '
+                          'and your inputs are never uploaded. The only network request the app makes '
+                          'is for live currency exchange rates, fetched from the free, key-less '
+                          'frankfurter.app API and cached for 30 minutes. Your theme, density, pinned '
+                          'tools, recents and calculation history are stored locally on your device.',
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 14,
+                            height: 1.55,
+                            fontWeight: FontWeight.w500,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        Center(
+                          child: FilledButton.tonalIcon(
+                            onPressed: () => context.canPop()
+                                ? context.pop()
+                                : context.go('/'),
+                            icon: const Icon(Icons.grid_view_rounded, size: 18),
+                            label: Text(
+                              'Back to calculators',
+                              style: GoogleFonts.ibmPlexSans(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -215,9 +209,9 @@ const _topics = <_Topic>[
     Icons.touch_app_rounded,
     'Any calculator',
     'Fill in the fields, then tap Calculate (or Convert). The result appears in a '
-        'coloured card — tap the copy icon on it to copy the value. The teal banner '
-        'at the top of every screen explains exactly what that tool does and the '
-        'formula it uses. The colour of each screen tells you which category you are in.',
+        'card — tap the copy icon on it to copy the value. Every tool screen opens '
+        'with a short note explaining what it does and the formula it uses; the small '
+        'coloured dot next to the title shows which category you are in.',
   ),
   _Topic(
     Icons.access_time_rounded,
@@ -261,14 +255,17 @@ const _topics = <_Topic>[
   _Topic(
     Icons.search_rounded,
     'Finding a tool fast',
-    'Use the search bar on the home screen — it matches tool names, descriptions and category '
-        'names. On a laptop, hover a category card to preview the tools inside it.',
+    'Press ⌘K (Ctrl+K) anywhere to open the command palette and search every tool by name, '
+        'category or even initials — or use the search box on the home screen. On wider screens '
+        'the side rail lists every category, and you can pin the tools you use most.',
   ),
   _Topic(
     Icons.brightness_6_rounded,
-    'Light & dark theme',
-    'Tap the sun / moon icon in the top-right of the home screen to switch between light and '
-        'dark. Your choice is remembered the next time you open the app.',
+    'Theme & density',
+    'Use the sun / moon icon — in the side rail on a wide screen, or on the Settings page — to '
+        'switch between light and dark; your choice is remembered. Settings also has a density '
+        'control (compact / comfortable / cozy) and lets you clear recents, pinned tools and '
+        'calculation history.',
   ),
 ];
 
