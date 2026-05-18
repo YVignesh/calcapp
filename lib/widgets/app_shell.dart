@@ -194,14 +194,29 @@ class _TopCategoryBar extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              'Calc Studio',
-              style: GoogleFonts.ibmPlexSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: cs.primary,
-                letterSpacing: -0.2,
-              ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.asset(
+                    'assets/images/calc_studio_icon.png',
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Calc Studio',
+                  style: GoogleFonts.ibmPlexSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: cs.primary,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(

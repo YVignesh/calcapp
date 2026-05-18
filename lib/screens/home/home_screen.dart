@@ -120,6 +120,8 @@ class _DesktopHome extends StatelessWidget {
                   _ToolGrid(routes: prefs.recents.take(6).toList()),
                   const SizedBox(height: 28),
                 ],
+                const _BrandPanel(height: 176),
+                const SizedBox(height: 28),
                 // All categories
                 _SectionHeading('ALL CATEGORIES'),
                 const SizedBox(height: 10),
@@ -160,6 +162,22 @@ class _MobileHomeState extends State<_MobileHome> {
         slivers: [
           SliverAppBar(
             pinned: true,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.asset(
+                    'assets/images/calc_studio_icon.png',
+                    width: 28,
+                    height: 28,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                ),
+              ),
+            ),
+            leadingWidth: 52,
             title: Text(
               'Calc Studio',
               style: GoogleFonts.ibmPlexSans(
@@ -219,6 +237,12 @@ class _MobileHomeState extends State<_MobileHome> {
                 ),
               ),
             ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+              child: const _BrandPanel(height: 138),
+            ),
+          ),
           // Categories
           SliverToBoxAdapter(
             child: Padding(
@@ -258,6 +282,37 @@ class _SectionHeading extends StatelessWidget {
         fontWeight: FontWeight.w600,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         letterSpacing: 0.8,
+      ),
+    );
+  }
+}
+
+class _BrandPanel extends StatelessWidget {
+  final double height;
+  const _BrandPanel({required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final borderColor = isLight ? AppTokens.lBorder : AppTokens.border;
+
+    return Semantics(
+      label: 'Calc Studio calculation workspace artwork',
+      image: true,
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppTokens.rCard),
+          border: Border.all(color: borderColor),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.asset(
+          'assets/images/calc_studio_visual.png',
+          width: double.infinity,
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+          filterQuality: FilterQuality.medium,
+        ),
       ),
     );
   }

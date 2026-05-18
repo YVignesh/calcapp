@@ -1,9 +1,30 @@
 {
   "name": "calcapp",
   "compatibility_date": "2026-05-11",
+  "main": "./src/seo-worker.js",
   "assets": {
     "directory": "./build/web",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/*",
+      "!/*.ico",
+      "!/*.js",
+      "!/*.json",
+      "!/*.map",
+      "!/*.png",
+      "!/*.wasm",
+      "!/assets/*",
+      "!/canvaskit/*",
+      "!/favicon.png",
+      "!/flutter_bootstrap.js",
+      "!/flutter_service_worker.js",
+      "!/icons/*",
+      "!/main.dart.js",
+      "!/manifest.json",
+      "!/robots.txt",
+      "!/sitemap.xml"
+    ]
   },
   "observability": {
     "enabled": true

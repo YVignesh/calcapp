@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,7 @@ import '../../providers/density_provider.dart';
 import '../../providers/history_provider.dart';
 import '../../providers/prefs_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../widgets/feedback_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -71,6 +71,8 @@ class SettingsScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         _FeedbackSection(),
                         SizedBox(height: 20),
+                        _InstallSection(),
+                        SizedBox(height: 20),
                         _AboutSection(),
                       ],
                     ),
@@ -88,14 +90,9 @@ class SettingsScreen extends StatelessWidget {
 class _FeedbackSection extends StatelessWidget {
   const _FeedbackSection();
 
-  static const _email = 'feedback@calcstudioapp.com';
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final borderColor = Theme.of(context).brightness == Brightness.light
-        ? AppTokens.lBorder
-        : AppTokens.border;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,45 +102,53 @@ class _FeedbackSection extends StatelessWidget {
           children: [
             ListTile(
               title: Text(
-                'Send feedback',
+                'Open feedback form',
                 style: GoogleFonts.ibmPlexSans(fontSize: 14),
               ),
               subtitle: Text(
-                _email,
+                'Collect bug reports, calculator ideas, or result corrections.',
                 style: GoogleFonts.ibmPlexSans(
                   fontSize: 12,
                   color: cs.onSurfaceVariant,
                 ),
               ),
-              trailing: const Icon(Icons.copy_rounded, size: 18),
-              onTap: () async {
-                await Clipboard.setData(const ClipboardData(text: _email));
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Feedback email copied',
-                      style: GoogleFonts.ibmPlexSans(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                );
-              },
+              trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+              onTap: () => showFeedbackDialog(context),
             ),
-            Divider(height: 1, color: borderColor),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _InstallSection extends StatelessWidget {
+  const _InstallSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('INSTALL'),
+        _Card(
+          children: [
             ListTile(
               title: Text(
-                'What to include',
+                'Install app & plugin info',
                 style: GoogleFonts.ibmPlexSans(fontSize: 14),
               ),
               subtitle: Text(
-                'Calculator name, expected result, actual result, device, and browser.',
+                'How to add Calc Studio to your device and what plugins it needs.',
                 style: GoogleFonts.ibmPlexSans(
                   fontSize: 12,
                   color: cs.onSurfaceVariant,
                 ),
               ),
+              trailing: const Icon(Icons.info_outline_rounded, size: 18),
+              onTap: () => showInstallInfoDialog(context),
             ),
           ],
         ),

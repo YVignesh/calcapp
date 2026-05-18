@@ -146,7 +146,10 @@
       };
 
       const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-      const meta = routeMeta[currentPath] || routeMeta['/'];
+      const injectedSeo = window.__CALC_STUDIO_SEO__;
+      const meta = injectedSeo && injectedSeo.path === currentPath && injectedSeo.meta
+        ? injectedSeo.meta
+        : (routeMeta[currentPath] || routeMeta['/']);
       document.title = meta.title;
 
       function setMeta(selector, attr, value) {
@@ -492,7 +495,10 @@
       };
 
       const path = window.location.pathname.replace(/\/$/, '') || '/';
-      const content = routeContent[path];
+      const injectedSeo = window.__CALC_STUDIO_SEO__;
+      const content = injectedSeo && injectedSeo.path === path && injectedSeo.content
+        ? injectedSeo.content
+        : routeContent[path];
       if (!content) return;
 
       document.getElementById('seo-title').textContent = content.title;
